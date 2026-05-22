@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -6,98 +7,169 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PartyPopper } from "lucide-react";
+import { Minus, Plus, Send, Sparkles, CalendarDays, MapPin, IndianRupee, User, Phone } from "lucide-react";
+import { EVENT_FIREWORKS } from "@/data/fireworks";
 
 const eventFormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  phone: z.string().min(10, { message: "Please enter a valid phone number." }),
+  name: z.string().min(2, { message: "Please enter your full name." }),
+  phone: z.string().min(10, { message: "Please enter a valid 10-digit phone number." }),
   eventType: z.string().min(1, { message: "Please select an event type." }),
-  date: z.string().min(1, { message: "Please select a date." }),
-  venue: z.string().min(2, { message: "Please enter the venue location." }),
-  guestCount: z.string().min(1, { message: "Please enter approximate guest count." }),
-  requirements: z.string().optional(),
+  date: z.string().min(1, { message: "Please select the event date." }),
+  venue: z.string().min(3, { message: "Please enter the venue / location." }),
+  budget: z.string().min(1, { message: "Please enter your approximate budget." }),
+  notes: z.string().optional(),
 });
 
 type EventFormValues = z.infer<typeof eventFormSchema>;
 
 export default function Events() {
-  const form = useForm<EventFormValues>({
-    resolver: zodResolver(eventFormSchema),
-    defaultValues: {
-      name: "",
-      phone: "",
-      eventType: "",
-      date: "",
-      venue: "",
-      guestCount: "",
-      requirements: "",
-    },
+  const [quantities, setQuantities] = useState<Record<string, number>>(() => {
+    const init: Record<string, number> = {};
+    EVENT_FIREWORKS.forEach((sec) => sec.items.forEach((item) => { init[item.id] = 0; }));
+    return init;
   });
 
-  function onSubmit(data: EventFormValues) {
-    const text = `*SHAH FIREWORKS - EVENT BOOKING REQUEST*
+  const form = useForm<EventFormValues>({
+    resolver: zodResolver(eventFormSchema),
+    defaultValues: { name: "", phone: "", eventType: "", date: "", venue: "", budget: "", notes: "" },
+  });
 
+  const increment = (id: string) => setQuantities((q) => ({ ...q, [id]: (q[id] || 0) + 1 }));
+  const decrement = (id: string) => setQuantities((q) => ({ ...q, [id]: Math.max(0, (q[id] || 0) - 1) }));
+
+  const selectedItems = EVENT_FIREWORKS.flatMap((sec) =>
+    sec.items.filter((item) => quantities[item.id] > 0).map((item) => ({
+      name: item.name,
+      localName: item.localName,
+      qty: quantities[item.id],
+    }))
+  );
+
+  function onSubmit(data: EventFormValues) {
+    const fireworksList =
+      selectedItems.length > 0
+        ? selectedItems.map((i) => `• ${i.name}${i.localName ? ` (${i.localName})` : ""} × ${i.qty}`).join("\n")
+        : "Not specified — to be discussed";
+
+    const text =
+`*SHAH FIREWORKS — EVENT BOOKING REQUEST*
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+*Customer Details*
 Name: ${data.name}
 Phone: ${data.phone}
-Event Type: ${data.eventType}
-Event Date: ${data.date}
-Venue/Location: ${data.venue}
-Guest Count: ${data.guestCount}
-Special Requirements: ${data.requirements || "None"}`;
 
-    const encodedText = encodeURIComponent(text);
-    window.open(`https://wa.me/918934859810?text=${encodedText}`, "_blank");
+*Event Details*
+Type: ${data.eventType}
+Date: ${data.date}
+Venue: ${data.venue}
+Budget: ${data.budget}
+
+*Fireworks Selected*
+${fireworksList}
+${data.notes ? `\n*Additional Notes*\n${data.notes}` : ""}
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+Sent via Shah Fireworks Website`;
+
+    window.open(`https://wa.me/918934859810?text=${encodeURIComponent(text)}`, "_blank");
   }
 
   return (
-    <div className="container py-12 px-4 md:px-6">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Book an Event</h1>
-          <p className="text-lg text-muted-foreground">
-            Let us make your special occasion truly unforgettable. From weddings to corporate events, we provide spectacular, safe, and professional fireworks displays.
+    <div className="min-h-screen">
+      {/* Page Header */}
+      <section className="relative py-16 overflow-hidden border-b border-border">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/8 to-transparent pointer-events-none" />
+        <div className="container px-4 md:px-6 relative z-10 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-4 py-1.5 text-sm text-primary font-medium mb-5">
+            <Sparkles className="h-3.5 w-3.5" />
+            Customized Event Packages
+          </div>
+          <h1
+            className="text-4xl md:text-5xl font-bold mb-4 text-foreground"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            Book Your Fireworks Display
+          </h1>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Fill in your event details, pick your fireworks, and send us a WhatsApp inquiry in one tap.
+            We will confirm availability and pricing within hours.
           </p>
         </div>
+      </section>
 
-        <div className="grid md:grid-cols-5 gap-12">
-          <div className="md:col-span-2 space-y-8">
-            <div className="bg-card rounded-xl p-6 border border-border">
-              <h3 className="text-xl font-bold mb-4 flex items-center">
-                <PartyPopper className="mr-2 h-5 w-5 text-primary" />
-                Events We Serve
+      <div className="container px-4 md:px-6 py-12 max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-3 gap-10">
+
+          {/* LEFT: Events We Serve */}
+          <div className="lg:col-span-1 space-y-6">
+            <div className="bg-card rounded-2xl border border-border p-6 shadow-md">
+              <h3 className="text-lg font-bold mb-5 text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Events We Specialise In
               </h3>
-              <ul className="space-y-4">
+              <div className="space-y-4">
                 {[
-                  { title: "Marriage & Baraat", desc: "Grand entry effects and sky shots" },
-                  { title: "Birthdays", desc: "Safe, colorful fountains and sparklers" },
-                  { title: "Diwali Festivities", desc: "Traditional favorites and premium boxes" },
-                  { title: "Corporate Events", desc: "Professional stage pyro and heavy fog" },
-                  { title: "New Year", desc: "Massive multi-shot cakes" },
-                  { title: "Any Occasion", desc: "Customized to your needs" },
+                  { title: "Marriage & Baraat", desc: "Army Gun Dance, sky shots, Cold Pyro entries" },
+                  { title: "Birthday Celebrations", desc: "Sparklers, fountains, color smoke displays" },
+                  { title: "Diwali & Festivals", desc: "Traditional crackers, anars, laris, and chakras" },
+                  { title: "Corporate Events", desc: "Stage pyro, matrix wheels, heavy fog effects" },
+                  { title: "New Year & Parties", desc: "Synchronized 120-shot sky displays, lanterns" },
+                  { title: "Any Special Occasion", desc: "Fully customized to your theme and budget" },
                 ].map((item, i) => (
-                  <li key={i}>
-                    <div className="font-semibold text-foreground">{item.title}</div>
-                    <div className="text-sm text-muted-foreground">{item.desc}</div>
-                  </li>
+                  <div key={i} className="flex gap-3 items-start">
+                    <div className="mt-1 h-2 w-2 rounded-full bg-primary shrink-0" />
+                    <div>
+                      <div className="font-semibold text-sm text-foreground">{item.title}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">{item.desc}</div>
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-primary/10 to-accent/5 rounded-2xl border border-primary/20 p-6">
+              <h4 className="font-bold text-sm text-primary uppercase tracking-wider mb-3">Booking Note</h4>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                For the <strong className="text-foreground">Army Commando Gun Dance</strong> performance,
+                please book at least <strong className="text-foreground">10 days in advance</strong> to
+                coordinate performers and transport.
+              </p>
+              <div className="mt-4 pt-4 border-t border-primary/20 text-sm">
+                <a href="tel:+919452457572" className="text-primary font-semibold hover:underline">
+                  +91 9452457572
+                </a>
+                <span className="text-muted-foreground"> or </span>
+                <a href="https://wa.me/918934859810" target="_blank" rel="noopener noreferrer" className="text-[#25D366] font-semibold hover:underline">
+                  WhatsApp +91 8934859810
+                </a>
+              </div>
             </div>
           </div>
 
-          <div className="md:col-span-3">
-            <div className="bg-card rounded-xl p-6 md:p-8 border border-border">
-              <h2 className="text-2xl font-bold mb-6">Booking Inquiry</h2>
+          {/* RIGHT: Booking Form */}
+          <div className="lg:col-span-2 space-y-8">
+
+            {/* Step 1: Event Details */}
+            <div className="bg-card rounded-2xl border border-border p-6 md:p-8 shadow-md">
+              <div className="flex items-center gap-3 mb-7">
+                <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold shrink-0">1</div>
+                <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  Your Event Details
+                </h2>
+              </div>
+
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form id="event-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <FormField
                       control={form.control}
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Full Name</FormLabel>
+                          <FormLabel className="flex items-center gap-1.5">
+                            <User className="h-3.5 w-3.5 text-primary" /> Full Name
+                          </FormLabel>
                           <FormControl>
-                            <Input placeholder="John Doe" {...field} />
+                            <Input placeholder="Rajesh Kumar" data-testid="input-name" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -108,9 +180,11 @@ Special Requirements: ${data.requirements || "None"}`;
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
+                          <FormLabel className="flex items-center gap-1.5">
+                            <Phone className="h-3.5 w-3.5 text-primary" /> Phone Number
+                          </FormLabel>
                           <FormControl>
-                            <Input placeholder="+91 9876543210" {...field} />
+                            <Input placeholder="+91 9876543210" data-testid="input-phone" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -118,26 +192,29 @@ Special Requirements: ${data.requirements || "None"}`;
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <FormField
                       control={form.control}
                       name="eventType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Event Type</FormLabel>
+                          <FormLabel className="flex items-center gap-1.5">
+                            <Sparkles className="h-3.5 w-3.5 text-primary" /> Event Type
+                          </FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger data-testid="select-event-type">
                                 <SelectValue placeholder="Select event type" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="Marriage/Baraat">Marriage / Baraat</SelectItem>
-                              <SelectItem value="Birthday">Birthday</SelectItem>
-                              <SelectItem value="Diwali">Diwali</SelectItem>
-                              <SelectItem value="Corporate">Corporate Event</SelectItem>
-                              <SelectItem value="New Year">New Year</SelectItem>
-                              <SelectItem value="Other">Other Occasion</SelectItem>
+                              <SelectItem value="Marriage / Baraat">Marriage / Baraat</SelectItem>
+                              <SelectItem value="Birthday Party">Birthday Party</SelectItem>
+                              <SelectItem value="Diwali Celebration">Diwali Celebration</SelectItem>
+                              <SelectItem value="Corporate Event">Corporate Event</SelectItem>
+                              <SelectItem value="New Year Party">New Year Party</SelectItem>
+                              <SelectItem value="Anniversary">Anniversary</SelectItem>
+                              <SelectItem value="Other Occasion">Other Occasion</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -149,9 +226,11 @@ Special Requirements: ${data.requirements || "None"}`;
                       name="date"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Event Date</FormLabel>
+                          <FormLabel className="flex items-center gap-1.5">
+                            <CalendarDays className="h-3.5 w-3.5 text-primary" /> Event Date
+                          </FormLabel>
                           <FormControl>
-                            <Input type="date" {...field} />
+                            <Input type="date" data-testid="input-date" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -159,15 +238,17 @@ Special Requirements: ${data.requirements || "None"}`;
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <FormField
                       control={form.control}
                       name="venue"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Venue / Location</FormLabel>
+                          <FormLabel className="flex items-center gap-1.5">
+                            <MapPin className="h-3.5 w-3.5 text-primary" /> Venue / Location
+                          </FormLabel>
                           <FormControl>
-                            <Input placeholder="City, Venue Name" {...field} />
+                            <Input placeholder="Palace Grounds, Lucknow" data-testid="input-venue" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -175,12 +256,14 @@ Special Requirements: ${data.requirements || "None"}`;
                     />
                     <FormField
                       control={form.control}
-                      name="guestCount"
+                      name="budget"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Approx. Guest Count</FormLabel>
+                          <FormLabel className="flex items-center gap-1.5">
+                            <IndianRupee className="h-3.5 w-3.5 text-primary" /> Approximate Budget
+                          </FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g. 500" {...field} />
+                            <Input placeholder="e.g. ₹25,000 – ₹50,000" data-testid="input-budget" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -190,28 +273,137 @@ Special Requirements: ${data.requirements || "None"}`;
 
                   <FormField
                     control={form.control}
-                    name="requirements"
+                    name="notes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Special Requirements (Optional)</FormLabel>
+                        <FormLabel>Additional Notes / Fireworks Range (Optional)</FormLabel>
                         <FormControl>
-                          <Textarea 
-                            placeholder="Tell us about specific items you want, like Cold Pyro, Gun Dance, etc." 
+                          <Textarea
+                            placeholder="Describe your ideal show — e.g. 'Want heavy sky shots during baraat entry, Cold Pyro for varmala stage, sky lanterns for doli farewell...'"
                             className="resize-none h-24"
-                            {...field} 
+                            data-testid="textarea-notes"
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-
-                  <Button type="submit" className="w-full h-12 text-base">
-                    Send Inquiry via WhatsApp
-                  </Button>
                 </form>
               </Form>
             </div>
+
+            {/* Step 2: Fireworks Selector */}
+            <div className="bg-card rounded-2xl border border-border p-6 md:p-8 shadow-md">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold shrink-0">2</div>
+                <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  Select Your Fireworks
+                </h2>
+              </div>
+              <p className="text-sm text-muted-foreground mb-7 ml-11">
+                Use + / - to set the quantity of each item. Prices vary per season — you will receive best offer on WhatsApp.
+              </p>
+
+              <div className="space-y-8">
+                {EVENT_FIREWORKS.map((section) => (
+                  <div key={section.section}>
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-4 pb-2 border-b border-border">
+                      {section.section}
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {section.items.map((item) => (
+                        <div
+                          key={item.id}
+                          className={`flex items-center justify-between gap-3 rounded-xl px-4 py-3 border transition-all duration-150 ${
+                            quantities[item.id] > 0
+                              ? "border-primary/50 bg-primary/8 shadow-sm"
+                              : "border-border bg-background hover:border-border/80"
+                          }`}
+                          data-testid={`item-${item.id}`}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium text-foreground leading-tight truncate">{item.name}</div>
+                            {item.localName && (
+                              <div className="text-xs text-muted-foreground mt-0.5">{item.localName}</div>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => decrement(item.id)}
+                              disabled={quantities[item.id] === 0}
+                              className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                              data-testid={`btn-dec-${item.id}`}
+                            >
+                              <Minus className="h-3.5 w-3.5" />
+                            </button>
+                            <span
+                              className={`w-6 text-center text-sm font-bold tabular-nums ${quantities[item.id] > 0 ? "text-primary" : "text-muted-foreground"}`}
+                            >
+                              {quantities[item.id]}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => increment(item.id)}
+                              className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+                              data-testid={`btn-inc-${item.id}`}
+                            >
+                              <Plus className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Step 3: Summary + Submit */}
+            <div className="bg-card rounded-2xl border border-border p-6 md:p-8 shadow-md">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold shrink-0">3</div>
+                <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  Review &amp; Send Inquiry
+                </h2>
+              </div>
+
+              {selectedItems.length > 0 ? (
+                <div className="mb-6 rounded-xl bg-primary/6 border border-primary/20 p-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-primary mb-3">Selected Fireworks ({selectedItems.length} items)</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                    {selectedItems.map((item, i) => (
+                      <div key={i} className="flex items-center justify-between text-sm">
+                        <span className="text-foreground truncate pr-2">{item.name}</span>
+                        <span className="font-bold text-primary shrink-0">× {item.qty}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-6 rounded-xl bg-muted/40 border border-border p-4 text-center text-sm text-muted-foreground">
+                  No fireworks selected yet — you can still submit and describe your needs in the notes above, or select items in Step 2.
+                </div>
+              )}
+
+              <div className="rounded-xl bg-[#25D366]/8 border border-[#25D366]/20 p-4 mb-6 text-sm text-muted-foreground">
+                Tapping the button below will open WhatsApp with all your details pre-filled.
+                Mukhtar Ahmad Shah will reply with pricing and availability within a few hours.
+              </div>
+
+              <Button
+                type="submit"
+                form="event-form"
+                size="lg"
+                className="w-full h-14 text-base font-semibold bg-[#25D366] hover:bg-[#20b858] text-white gap-3 shadow-lg"
+                data-testid="button-submit-event"
+              >
+                <Send className="h-5 w-5" />
+                Send Event Inquiry via WhatsApp
+              </Button>
+            </div>
+
           </div>
         </div>
       </div>
