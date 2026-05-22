@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Minus, Plus, Send, Package, Truck, Percent, ShieldCheck, IndianRupee, User, Phone, MapPin, Building2 } from "lucide-react";
 import { WHOLESALE_FIREWORKS } from "@/data/fireworks";
+import { useLanguage } from "@/context/LanguageContext";
 
 const wholesaleFormSchema = z.object({
   name: z.string().min(2, { message: "Please enter your name." }),
@@ -21,6 +22,8 @@ const wholesaleFormSchema = z.object({
 type WholesaleFormValues = z.infer<typeof wholesaleFormSchema>;
 
 export default function Wholesale() {
+  const { t } = useLanguage();
+
   const [quantities, setQuantities] = useState<Record<string, number>>(() => {
     const init: Record<string, number> = {};
     WHOLESALE_FIREWORKS.forEach((sec) => sec.items.forEach((item) => { init[item.id] = 0; }));
@@ -45,25 +48,27 @@ export default function Wholesale() {
   function onSubmit(data: WholesaleFormValues) {
     const itemsList =
       selectedItems.length > 0
-        ? selectedItems.map((i) => `• ${i.name} — Qty: ${i.qty} (cartons/units)`).join("\n")
-        : "Not specified — to be discussed";
+        ? selectedItems.map((i) => `  • ${i.name} — Qty: ${i.qty} cartons/units`).join("\n")
+        : "  Not specified — to discuss further";
 
     const text =
-`*SHAH FIREWORKS — WHOLESALE INQUIRY*
-━━━━━━━━━━━━━━━━━━━━━━━━━━
+`📦 *SHAH FIREWORKS — WHOLESALE INQUIRY*
 
-*Business Details*
-Name: ${data.name}
-Business / Shop: ${data.businessName}
-Phone: ${data.phone}
-City: ${data.city}
-Approx. Order Value: ${data.orderValue}
+👤 *BUSINESS DETAILS*
+  Name: ${data.name}
+  Business / Shop: ${data.businessName}
+  Phone: ${data.phone}
+  City: ${data.city}
+  Order Value: ${data.orderValue}
 
-*Items Required*
+📦 *ITEMS REQUIRED*
 ${itemsList}
-${data.notes ? `\n*Additional Notes*\n${data.notes}` : ""}
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-Sent via Shah Fireworks Website`;
+${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
+
+📍 *Shah Fireworks*
+  Ghagsara Bazar, Sahjanwa
+  Gorakhpur, UP — 273001
+  WhatsApp: +91 8934859810`;
 
     window.open(`https://wa.me/918934859810?text=${encodeURIComponent(text)}`, "_blank");
   }
@@ -78,16 +83,10 @@ Sent via Shah Fireworks Website`;
             <Package className="h-3.5 w-3.5" />
             Bulk Orders &amp; Trade Pricing
           </div>
-          <h1
-            className="text-4xl md:text-5xl font-bold mb-4 text-foreground"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            Wholesale Inquiry
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
+            {t("ws_title")}
           </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Retailers, event planners, and shop owners — get the best bulk rates directly from Shah Fireworks.
-            Fill the form and we will send you a customised quote via WhatsApp.
-          </p>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t("ws_subtitle")}</p>
         </div>
       </section>
 
@@ -116,12 +115,10 @@ Sent via Shah Fireworks Website`;
       <div className="container px-4 md:px-6 py-12 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-3 gap-10">
 
-          {/* LEFT: Info */}
+          {/* LEFT */}
           <div className="lg:col-span-1 space-y-6">
             <div className="bg-card rounded-2xl border border-border p-6 shadow-md">
-              <h3 className="text-lg font-bold mb-5 text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
-                Who Can Order Wholesale?
-              </h3>
+              <h3 className="text-lg font-bold mb-5 text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>Who Can Order Wholesale?</h3>
               <div className="space-y-4">
                 {[
                   { title: "Fireworks Retailers & Shops", desc: "Stock up for Diwali and festive season" },
@@ -144,7 +141,7 @@ Sent via Shah Fireworks Website`;
             <div className="bg-gradient-to-br from-accent/10 to-primary/5 rounded-2xl border border-accent/20 p-6">
               <h4 className="font-bold text-sm text-accent uppercase tracking-wider mb-3">Direct Contact</h4>
               <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                For urgent bulk orders or to visit our shop in Bargo, contact Mukhtar Ahmad Shah directly.
+                For urgent bulk orders or to visit our shop in Gorakhpur, contact Mukhtar Ahmad Shah directly.
               </p>
               <div className="space-y-2 text-sm">
                 <a href="tel:+919452457572" className="flex items-center gap-2 text-foreground font-semibold hover:text-primary transition-colors">
@@ -156,138 +153,89 @@ Sent via Shah Fireworks Website`;
                 <a href="https://wa.me/918934859810" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#25D366] font-semibold hover:underline">
                   <Phone className="h-4 w-4" /> WhatsApp: +91 8934859810
                 </a>
+                <div className="flex items-start gap-2 text-muted-foreground pt-2">
+                  <MapPin className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <span className="text-xs">Ghagsara Bazar, Sahjanwa, Gorakhpur, UP</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* RIGHT: Wholesale Form */}
+          {/* RIGHT */}
           <div className="lg:col-span-2 space-y-8">
 
-            {/* Step 1: Business Details */}
+            {/* Step 1 */}
             <div className="bg-card rounded-2xl border border-border p-6 md:p-8 shadow-md">
               <div className="flex items-center gap-3 mb-7">
                 <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-accent-foreground text-sm font-bold shrink-0">1</div>
-                <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Your Business Details
-                </h2>
+                <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>{t("ws_step1")}</h2>
               </div>
 
               <Form {...form}>
                 <form id="wholesale-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-1.5">
-                            <User className="h-3.5 w-3.5 text-accent" /> Your Name
-                          </FormLabel>
-                          <FormControl>
-                            <Input placeholder="Ramesh Verma" data-testid="input-ws-name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="businessName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-1.5">
-                            <Building2 className="h-3.5 w-3.5 text-accent" /> Business / Shop Name
-                          </FormLabel>
-                          <FormControl>
-                            <Input placeholder="Verma Crackers & Co." data-testid="input-ws-business" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <FormField control={form.control} name="name" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-1.5"><User className="h-3.5 w-3.5 text-accent" /> Your Name</FormLabel>
+                        <FormControl><Input placeholder="Ramesh Verma" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="businessName" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5 text-accent" /> Business / Shop Name</FormLabel>
+                        <FormControl><Input placeholder="Verma Crackers & Co." {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-1.5">
-                            <Phone className="h-3.5 w-3.5 text-accent" /> Phone Number
-                          </FormLabel>
-                          <FormControl>
-                            <Input placeholder="+91 9876543210" data-testid="input-ws-phone" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="city"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-1.5">
-                            <MapPin className="h-3.5 w-3.5 text-accent" /> City / Town
-                          </FormLabel>
-                          <FormControl>
-                            <Input placeholder="Lucknow, UP" data-testid="input-ws-city" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <FormField control={form.control} name="phone" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-1.5"><Phone className="h-3.5 w-3.5 text-accent" /> Phone Number</FormLabel>
+                        <FormControl><Input placeholder="+91 9876543210" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="city" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-accent" /> City / Town</FormLabel>
+                        <FormControl><Input placeholder="Gorakhpur, UP" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
                   </div>
 
-                  <FormField
-                    control={form.control}
-                    name="orderValue"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-1.5">
-                          <IndianRupee className="h-3.5 w-3.5 text-accent" /> Approximate Order Value / Budget
-                        </FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g. ₹50,000 or ₹2,00,000" data-testid="input-ws-order-value" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <FormField control={form.control} name="orderValue" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-1.5"><IndianRupee className="h-3.5 w-3.5 text-accent" /> Approximate Order Value / Budget</FormLabel>
+                      <FormControl><Input placeholder="e.g. ₹50,000 or ₹2,00,000" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
 
-                  <FormField
-                    control={form.control}
-                    name="notes"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Additional Requirements (Optional)</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Any specific brands, special requests, delivery location, or preferred payment terms..."
-                            className="resize-none h-24"
-                            data-testid="textarea-ws-notes"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <FormField control={form.control} name="notes" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Additional Requirements (Optional)</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Any specific brands, delivery location, or preferred payment terms..." className="resize-none h-24" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
                 </form>
               </Form>
             </div>
 
-            {/* Step 2: Item Selector */}
+            {/* Step 2 */}
             <div className="bg-card rounded-2xl border border-border p-6 md:p-8 shadow-md">
               <div className="flex items-center gap-3 mb-2">
                 <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-accent-foreground text-sm font-bold shrink-0">2</div>
-                <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Select Items &amp; Quantities
-                </h2>
+                <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>{t("ws_step2")}</h2>
               </div>
               <p className="text-sm text-muted-foreground mb-7 ml-11">
-                Set the quantity (in cartons/units) for each item. Wholesale prices will be shared on WhatsApp.
+                Set the quantity (in cartons/units) for each item. Wholesale prices shared on WhatsApp.
               </p>
 
               <div className="space-y-8">
@@ -305,32 +253,20 @@ Sent via Shah Fireworks Website`;
                               ? "border-accent/60 bg-accent/8 shadow-sm"
                               : "border-border bg-background hover:border-border/80"
                           }`}
-                          data-testid={`item-ws-${item.id}`}
                         >
                           <div className="flex-1 min-w-0">
                             <div className="text-sm font-medium text-foreground leading-tight truncate">{item.name}</div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <button
-                              type="button"
-                              onClick={() => decrement(item.id)}
-                              disabled={quantities[item.id] === 0}
-                              className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:border-accent hover:text-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                              data-testid={`btn-ws-dec-${item.id}`}
-                            >
+                            <button type="button" onClick={() => decrement(item.id)} disabled={quantities[item.id] === 0}
+                              className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:border-accent hover:text-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                               <Minus className="h-3.5 w-3.5" />
                             </button>
-                            <span
-                              className={`w-6 text-center text-sm font-bold tabular-nums ${quantities[item.id] > 0 ? "text-accent" : "text-muted-foreground"}`}
-                            >
+                            <span className={`w-6 text-center text-sm font-bold tabular-nums ${quantities[item.id] > 0 ? "text-accent" : "text-muted-foreground"}`}>
                               {quantities[item.id]}
                             </span>
-                            <button
-                              type="button"
-                              onClick={() => increment(item.id)}
-                              className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:border-accent hover:text-accent transition-colors"
-                              data-testid={`btn-ws-inc-${item.id}`}
-                            >
+                            <button type="button" onClick={() => increment(item.id)}
+                              className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:border-accent hover:text-accent transition-colors">
                               <Plus className="h-3.5 w-3.5" />
                             </button>
                           </div>
@@ -342,20 +278,16 @@ Sent via Shah Fireworks Website`;
               </div>
             </div>
 
-            {/* Step 3: Summary + Submit */}
+            {/* Step 3 */}
             <div className="bg-card rounded-2xl border border-border p-6 md:p-8 shadow-md">
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-accent-foreground text-sm font-bold shrink-0">3</div>
-                <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Review &amp; Send Inquiry
-                </h2>
+                <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>{t("ws_step3")}</h2>
               </div>
 
               {selectedItems.length > 0 ? (
                 <div className="mb-6 rounded-xl bg-accent/6 border border-accent/20 p-4">
-                  <p className="text-xs font-bold uppercase tracking-wider text-accent mb-3">
-                    Items Selected ({selectedItems.length})
-                  </p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-accent mb-3">{t("ws_selected")} ({selectedItems.length})</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                     {selectedItems.map((item, i) => (
                       <div key={i} className="flex items-center justify-between text-sm">
@@ -367,24 +299,18 @@ Sent via Shah Fireworks Website`;
                 </div>
               ) : (
                 <div className="mb-6 rounded-xl bg-muted/40 border border-border p-4 text-center text-sm text-muted-foreground">
-                  No items selected yet — you can still submit and mention your needs in the notes above.
+                  {t("ws_noitems")}
                 </div>
               )}
 
               <div className="rounded-xl bg-[#25D366]/8 border border-[#25D366]/20 p-4 mb-6 text-sm text-muted-foreground">
-                Your inquiry will open WhatsApp with all details pre-filled.
-                We will respond with wholesale pricing and availability promptly.
+                Your inquiry will open WhatsApp with all details pre-filled. We will respond with wholesale pricing and availability promptly.
               </div>
 
-              <Button
-                type="submit"
-                form="wholesale-form"
-                size="lg"
-                className="w-full h-14 text-base font-semibold bg-[#25D366] hover:bg-[#20b858] text-white gap-3 shadow-lg"
-                data-testid="button-submit-wholesale"
-              >
+              <Button type="submit" form="wholesale-form" size="lg"
+                className="w-full h-14 text-base font-semibold bg-[#25D366] hover:bg-[#20b858] text-white gap-3 shadow-lg">
                 <Send className="h-5 w-5" />
-                Send Wholesale Inquiry via WhatsApp
+                {t("ws_submit")}
               </Button>
             </div>
           </div>

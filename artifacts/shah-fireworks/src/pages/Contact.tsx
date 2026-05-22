@@ -1,116 +1,277 @@
-import { MapPin, Phone, MessageCircle, User } from "lucide-react";
+import { MapPin, Phone, MessageCircle, User, Clock, Navigation, ExternalLink } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import { useLanguage } from "@/context/LanguageContext";
+
+const LAT = 26.8307161;
+const LNG = 83.1543079;
+const MAPS_DIRECTIONS = `https://www.google.com/maps/dir/?api=1&destination=${LAT},${LNG}`;
+const MAPS_VIEW = `https://maps.google.com/maps?q=${LAT},${LNG}&z=16&output=embed`;
+const MAPS_OPEN = `https://www.google.com/maps/search/?api=1&query=${LAT},${LNG}`;
 
 export default function Contact() {
-  // Use window.location.origin if available, fallback to placeholder
-  const domain = typeof window !== 'undefined' ? window.location.origin : 'https://shahfireworks.in';
+  const { t } = useLanguage();
+  const domain = typeof window !== "undefined" ? window.location.origin : "https://shahfireworks.in";
+
+  const qrCodes = [
+    {
+      value: domain,
+      label: t("contact_qr_website"),
+      sub: t("contact_qr_website_sub"),
+      color: "#DC2626",
+      bg: "bg-red-50",
+    },
+    {
+      value: `${domain}/catalogue`,
+      label: t("contact_qr_catalogue"),
+      sub: t("contact_qr_catalogue_sub"),
+      color: "#B45309",
+      bg: "bg-amber-50",
+    },
+    {
+      value: `${domain}/events`,
+      label: t("contact_qr_book"),
+      sub: t("contact_qr_book_sub"),
+      color: "#7C3AED",
+      bg: "bg-purple-50",
+    },
+    {
+      value: "https://wa.me/918934859810",
+      label: t("contact_qr_whatsapp"),
+      sub: t("contact_qr_whatsapp_sub"),
+      color: "#16A34A",
+      bg: "bg-green-50",
+    },
+  ];
 
   return (
-    <div className="container py-12 px-4 md:px-6">
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">Get in Touch</h1>
-        <p className="text-lg text-muted-foreground">
-          We're here to help you plan the perfect display. Reach out via phone or WhatsApp.
-        </p>
-      </div>
+    <div className="min-h-screen">
 
-      <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto mb-20">
-        <div className="space-y-8">
-          <div className="flex items-start">
-            <div className="bg-primary/10 p-4 rounded-full mr-6">
-              <User className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold mb-2">Owner</h3>
-              <p className="text-lg text-foreground">Mukhtar Ahmad Shah</p>
-              <p className="text-muted-foreground">Gram Pradhan, Bargo</p>
-            </div>
-          </div>
+      {/* Header */}
+      <section className="relative py-16 border-b border-border overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/8 to-transparent pointer-events-none" />
+        <div className="container px-4 md:px-6 relative z-10 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            {t("contact_title")}
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t("contact_subtitle")}</p>
+        </div>
+      </section>
 
-          <div className="flex items-start">
-            <div className="bg-primary/10 p-4 rounded-full mr-6">
-              <Phone className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold mb-2">Call Us</h3>
-              <p className="text-lg text-foreground mb-1"><a href="tel:+919452457572" className="hover:text-primary transition-colors">+91 9452457572</a></p>
-              <p className="text-lg text-foreground"><a href="tel:+917985759036" className="hover:text-primary transition-colors">+91 7985759036</a></p>
-            </div>
-          </div>
+      <div className="container px-4 md:px-6 py-12 max-w-6xl mx-auto space-y-12">
 
-          <div className="flex items-start">
-            <div className="bg-[#25D366]/10 p-4 rounded-full mr-6">
-              <MessageCircle className="h-6 w-6 text-[#25D366]" />
+        {/* Contact Cards + Fast Response */}
+        <div className="grid md:grid-cols-2 gap-8">
+
+          {/* Contact details */}
+          <div className="bg-card rounded-2xl border border-border p-7 shadow-md space-y-7">
+
+            {/* Owner */}
+            <div className="flex items-start gap-4">
+              <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                <User className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">{t("contact_owner")}</p>
+                <p className="text-lg font-bold text-foreground">Mukhtar Ahmad Shah</p>
+                <p className="text-sm text-muted-foreground">{t("owner_title")}</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl font-bold mb-2">WhatsApp</h3>
-              <p className="text-lg text-foreground">
-                <a href="https://wa.me/918934859810" className="hover:text-[#25D366] transition-colors font-medium">
+
+            <div className="h-px bg-border" />
+
+            {/* Phone */}
+            <div className="flex items-start gap-4">
+              <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                <Phone className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">{t("contact_call")}</p>
+                <a href="tel:+919452457572" className="block text-lg font-semibold text-foreground hover:text-primary transition-colors">
+                  +91 9452457572
+                </a>
+                <a href="tel:+917985759036" className="block text-base text-muted-foreground hover:text-primary transition-colors mt-1">
+                  +91 7985759036
+                </a>
+              </div>
+            </div>
+
+            <div className="h-px bg-border" />
+
+            {/* WhatsApp */}
+            <div className="flex items-start gap-4">
+              <div className="w-11 h-11 bg-[#25D366]/10 rounded-xl flex items-center justify-center shrink-0">
+                <MessageCircle className="h-5 w-5 text-[#25D366]" />
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">{t("contact_whatsapp")}</p>
+                <a
+                  href="https://wa.me/918934859810"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-lg font-semibold text-[#25D366] hover:underline"
+                >
                   +91 8934859810
                 </a>
-              </p>
-              <p className="text-muted-foreground mt-1">Available 24/7 for inquiries</p>
+                <p className="text-sm text-muted-foreground mt-1">Available 24/7</p>
+              </div>
+            </div>
+
+            <div className="h-px bg-border" />
+
+            {/* Address + Directions */}
+            <div className="flex items-start gap-4">
+              <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                <MapPin className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">{t("contact_address")}</p>
+                <p className="text-base font-semibold text-foreground leading-snug">{t("contact_address_full")}</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  GPS: {LAT}, {LNG}
+                </p>
+                <div className="flex flex-wrap gap-3 mt-4">
+                  <a
+                    href={MAPS_DIRECTIONS}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-primary hover:bg-primary/90 rounded-lg px-4 py-2.5 transition-colors shadow"
+                  >
+                    <Navigation className="h-4 w-4" />
+                    {t("contact_directions")}
+                  </a>
+                  <a
+                    href={MAPS_OPEN}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-primary border border-primary/25 bg-primary/8 hover:bg-primary/15 rounded-lg px-4 py-2.5 transition-colors"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    View on Maps
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div className="h-px bg-border" />
+
+            {/* Hours */}
+            <div className="flex items-start gap-4">
+              <div className="w-11 h-11 bg-accent/10 rounded-xl flex items-center justify-center shrink-0">
+                <Clock className="h-5 w-5 text-accent" />
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">{t("contact_hours")}</p>
+                <p className="text-sm text-foreground leading-relaxed">{t("contact_hours_body")}</p>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-start">
-            <div className="bg-primary/10 p-4 rounded-full mr-6">
-              <MapPin className="h-6 w-6 text-primary" />
+          {/* Fast response + map */}
+          <div className="flex flex-col gap-6">
+
+            {/* WhatsApp CTA card */}
+            <div className="bg-gradient-to-br from-[#25D366]/10 to-[#25D366]/5 rounded-2xl border border-[#25D366]/25 p-7 text-center shadow-md">
+              <MessageCircle className="h-10 w-10 text-[#25D366] mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-foreground mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+                {t("contact_fast")}
+              </h3>
+              <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{t("contact_fast_body")}</p>
+              <a
+                href="https://wa.me/918934859810"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 w-full h-13 rounded-xl bg-[#25D366] hover:bg-[#20b858] text-white text-base font-semibold py-3 transition-colors shadow-lg"
+              >
+                <MessageCircle className="h-5 w-5" />
+                {t("contact_chat")}
+              </a>
             </div>
-            <div>
-              <h3 className="text-xl font-bold mb-2">Location</h3>
-              <p className="text-lg text-foreground">Bargo, Uttar Pradesh</p>
-              <p className="text-muted-foreground">India</p>
+
+            {/* Embedded Google Map */}
+            <div className="rounded-2xl border border-border overflow-hidden shadow-md flex-1 min-h-[220px]">
+              <iframe
+                src={MAPS_VIEW}
+                width="100%"
+                height="100%"
+                style={{ border: 0, minHeight: "220px", display: "block" }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Shah Fireworks Location"
+              />
             </div>
           </div>
         </div>
 
-        <div className="bg-card rounded-2xl border border-border p-8 h-full flex flex-col justify-center text-center">
-            <h3 className="text-2xl font-bold mb-4">Fast Responses</h3>
-            <p className="text-muted-foreground mb-8">
-              For the fastest response, send us a message on WhatsApp with your requirements. We typically reply within a few hours.
+        {/* QR Codes — 4 codes */}
+        <div>
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
+              {t("contact_qr_title")}
+            </h2>
+            <p className="text-muted-foreground mt-2 text-sm">
+              Save time — scan any code below with your phone camera
             </p>
-            <a 
-              href="https://wa.me/918934859810" 
-              target="_blank" 
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+            {qrCodes.map((qr, i) => (
+              <div
+                key={i}
+                className="flex flex-col items-center rounded-2xl border border-border bg-card p-6 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/6 transition-all duration-300"
+              >
+                <div className={`${qr.bg} p-4 rounded-xl mb-5 border border-gray-200 shadow-sm`}>
+                  <QRCodeSVG
+                    value={qr.value}
+                    size={130}
+                    level="H"
+                    fgColor={qr.color}
+                    bgColor="#FFFFFF"
+                  />
+                </div>
+                <h4 className="font-bold text-base text-foreground mb-1" style={{ color: qr.color }}>
+                  {qr.label}
+                </h4>
+                <p className="text-xs text-center text-muted-foreground leading-relaxed">{qr.sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Share location section */}
+        <div className="rounded-2xl border border-border bg-card p-8 text-center">
+          <MapPin className="h-10 w-10 text-primary mx-auto mb-4" />
+          <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Visit Our Shop
+          </h3>
+          <p className="text-muted-foreground text-sm mb-2">
+            {t("contact_address_full")}
+          </p>
+          <p className="text-xs text-muted-foreground mb-6">
+            GPS Coordinates: {LAT}, {LNG}
+          </p>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <a
+              href={MAPS_DIRECTIONS}
+              target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-14 items-center justify-center rounded-md bg-[#25D366] px-8 text-base font-medium text-white shadow transition-colors hover:bg-[#20bd5a] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-primary hover:bg-primary/90 rounded-xl px-6 py-3 transition-colors shadow-lg shadow-primary/25"
             >
-              <MessageCircle className="mr-2 h-5 w-5" />
-              Chat on WhatsApp
+              <Navigation className="h-4 w-4" />
+              Get Directions
             </a>
+            <a
+              href={`https://wa.me/918934859810?text=${encodeURIComponent("Hello! I want to visit your shop. Please share directions.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#25D366] hover:bg-[#20b858] rounded-xl px-6 py-3 transition-colors shadow-lg"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Ask for Directions on WhatsApp
+            </a>
+          </div>
         </div>
-      </div>
 
-      <div className="max-w-5xl mx-auto border-t border-border pt-16">
-        <h2 className="text-3xl font-bold text-center mb-10">Scan & Connect</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          
-          <div className="flex flex-col items-center p-6 bg-card rounded-xl border border-border">
-            <div className="bg-white p-4 rounded-xl mb-6 border border-gray-200">
-              <QRCodeSVG value={domain} size={150} level="H" />
-            </div>
-            <h4 className="font-bold text-lg mb-2">Website</h4>
-            <p className="text-sm text-center text-muted-foreground">Scan to visit our homepage</p>
-          </div>
-
-          <div className="flex flex-col items-center p-6 bg-card rounded-xl border border-border">
-            <div className="bg-white p-4 rounded-xl mb-6 border border-gray-200">
-              <QRCodeSVG value={`${domain}/catalogue`} size={150} level="H" />
-            </div>
-            <h4 className="font-bold text-lg mb-2">Catalogue</h4>
-            <p className="text-sm text-center text-muted-foreground">Scan to browse our full product range</p>
-          </div>
-
-          <div className="flex flex-col items-center p-6 bg-card rounded-xl border border-border">
-            <div className="bg-white p-4 rounded-xl mb-6 border border-gray-200">
-              <QRCodeSVG value="https://wa.me/918934859810" size={150} level="H" />
-            </div>
-            <h4 className="font-bold text-lg mb-2 text-[#25D366]">WhatsApp</h4>
-            <p className="text-sm text-center text-muted-foreground">Scan to message us directly</p>
-          </div>
-
-        </div>
       </div>
     </div>
   );

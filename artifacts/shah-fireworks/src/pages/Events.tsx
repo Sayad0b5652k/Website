@@ -9,10 +9,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Minus, Plus, Send, Sparkles, CalendarDays, MapPin, IndianRupee, User, Phone } from "lucide-react";
 import { EVENT_FIREWORKS } from "@/data/fireworks";
+import { useLanguage } from "@/context/LanguageContext";
 
 const eventFormSchema = z.object({
   name: z.string().min(2, { message: "Please enter your full name." }),
-  phone: z.string().min(10, { message: "Please enter a valid 10-digit phone number." }),
+  phone: z.string().min(10, { message: "Please enter a valid phone number." }),
   eventType: z.string().min(1, { message: "Please select an event type." }),
   date: z.string().min(1, { message: "Please select the event date." }),
   venue: z.string().min(3, { message: "Please enter the venue / location." }),
@@ -23,6 +24,8 @@ const eventFormSchema = z.object({
 type EventFormValues = z.infer<typeof eventFormSchema>;
 
 export default function Events() {
+  const { t } = useLanguage();
+
   const [quantities, setQuantities] = useState<Record<string, number>>(() => {
     const init: Record<string, number> = {};
     EVENT_FIREWORKS.forEach((sec) => sec.items.forEach((item) => { init[item.id] = 0; }));
@@ -48,28 +51,30 @@ export default function Events() {
   function onSubmit(data: EventFormValues) {
     const fireworksList =
       selectedItems.length > 0
-        ? selectedItems.map((i) => `• ${i.name}${i.localName ? ` (${i.localName})` : ""} × ${i.qty}`).join("\n")
-        : "Not specified — to be discussed";
+        ? selectedItems.map((i) => `  • ${i.name}${i.localName ? ` (${i.localName})` : ""} × ${i.qty}`).join("\n")
+        : "  Not specified — to discuss further";
 
     const text =
-`*SHAH FIREWORKS — EVENT BOOKING REQUEST*
-━━━━━━━━━━━━━━━━━━━━━━━━━━
+`🎆 *SHAH FIREWORKS — EVENT BOOKING*
 
-*Customer Details*
-Name: ${data.name}
-Phone: ${data.phone}
+👤 *CUSTOMER DETAILS*
+  Name: ${data.name}
+  Phone: ${data.phone}
 
-*Event Details*
-Type: ${data.eventType}
-Date: ${data.date}
-Venue: ${data.venue}
-Budget: ${data.budget}
+🎊 *EVENT DETAILS*
+  Type: ${data.eventType}
+  Date: ${data.date}
+  Venue: ${data.venue}
+  Budget: ${data.budget}
 
-*Fireworks Selected*
+🎇 *FIREWORKS SELECTED*
 ${fireworksList}
-${data.notes ? `\n*Additional Notes*\n${data.notes}` : ""}
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-Sent via Shah Fireworks Website`;
+${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
+
+📍 *Shah Fireworks*
+  Ghagsara Bazar, Sahjanwa
+  Gorakhpur, UP — 273001
+  WhatsApp: +91 8934859810`;
 
     window.open(`https://wa.me/918934859810?text=${encodeURIComponent(text)}`, "_blank");
   }
@@ -84,23 +89,17 @@ Sent via Shah Fireworks Website`;
             <Sparkles className="h-3.5 w-3.5" />
             Customized Event Packages
           </div>
-          <h1
-            className="text-4xl md:text-5xl font-bold mb-4 text-foreground"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            Book Your Fireworks Display
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
+            {t("events_title")}
           </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Fill in your event details, pick your fireworks, and send us a WhatsApp inquiry in one tap.
-            We will confirm availability and pricing within hours.
-          </p>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t("events_subtitle")}</p>
         </div>
       </section>
 
       <div className="container px-4 md:px-6 py-12 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-3 gap-10">
 
-          {/* LEFT: Events We Serve */}
+          {/* LEFT sidebar */}
           <div className="lg:col-span-1 space-y-6">
             <div className="bg-card rounded-2xl border border-border p-6 shadow-md">
               <h3 className="text-lg font-bold mb-5 text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
@@ -127,168 +126,108 @@ Sent via Shah Fireworks Website`;
             </div>
 
             <div className="bg-gradient-to-br from-primary/10 to-accent/5 rounded-2xl border border-primary/20 p-6">
-              <h4 className="font-bold text-sm text-primary uppercase tracking-wider mb-3">Booking Note</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                For the <strong className="text-foreground">Army Commando Gun Dance</strong> performance,
-                please book at least <strong className="text-foreground">10 days in advance</strong> to
-                coordinate performers and transport.
-              </p>
-              <div className="mt-4 pt-4 border-t border-primary/20 text-sm">
-                <a href="tel:+919452457572" className="text-primary font-semibold hover:underline">
-                  +91 9452457572
-                </a>
-                <span className="text-muted-foreground"> or </span>
-                <a href="https://wa.me/918934859810" target="_blank" rel="noopener noreferrer" className="text-[#25D366] font-semibold hover:underline">
-                  WhatsApp +91 8934859810
+              <h4 className="font-bold text-sm text-primary uppercase tracking-wider mb-3">{t("events_note_tag")}</h4>
+              <p className="text-sm text-muted-foreground leading-relaxed">{t("events_note_body")}</p>
+              <div className="mt-4 pt-4 border-t border-primary/20 text-sm space-y-1">
+                <a href="tel:+919452457572" className="block text-primary font-semibold hover:underline">+91 9452457572</a>
+                <a href="https://wa.me/918934859810" target="_blank" rel="noopener noreferrer" className="block text-[#25D366] font-semibold hover:underline">
+                  WhatsApp: +91 8934859810
                 </a>
               </div>
             </div>
           </div>
 
-          {/* RIGHT: Booking Form */}
+          {/* RIGHT: form */}
           <div className="lg:col-span-2 space-y-8">
 
-            {/* Step 1: Event Details */}
+            {/* Step 1 */}
             <div className="bg-card rounded-2xl border border-border p-6 md:p-8 shadow-md">
               <div className="flex items-center gap-3 mb-7">
                 <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold shrink-0">1</div>
                 <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Your Event Details
+                  {t("events_step1")}
                 </h2>
               </div>
 
               <Form {...form}>
                 <form id="event-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-1.5">
-                            <User className="h-3.5 w-3.5 text-primary" /> Full Name
-                          </FormLabel>
-                          <FormControl>
-                            <Input placeholder="Rajesh Kumar" data-testid="input-name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-1.5">
-                            <Phone className="h-3.5 w-3.5 text-primary" /> Phone Number
-                          </FormLabel>
-                          <FormControl>
-                            <Input placeholder="+91 9876543210" data-testid="input-phone" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <FormField
-                      control={form.control}
-                      name="eventType"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-1.5">
-                            <Sparkles className="h-3.5 w-3.5 text-primary" /> Event Type
-                          </FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger data-testid="select-event-type">
-                                <SelectValue placeholder="Select event type" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="Marriage / Baraat">Marriage / Baraat</SelectItem>
-                              <SelectItem value="Birthday Party">Birthday Party</SelectItem>
-                              <SelectItem value="Diwali Celebration">Diwali Celebration</SelectItem>
-                              <SelectItem value="Corporate Event">Corporate Event</SelectItem>
-                              <SelectItem value="New Year Party">New Year Party</SelectItem>
-                              <SelectItem value="Anniversary">Anniversary</SelectItem>
-                              <SelectItem value="Other Occasion">Other Occasion</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="date"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-1.5">
-                            <CalendarDays className="h-3.5 w-3.5 text-primary" /> Event Date
-                          </FormLabel>
-                          <FormControl>
-                            <Input type="date" data-testid="input-date" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <FormField
-                      control={form.control}
-                      name="venue"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-1.5">
-                            <MapPin className="h-3.5 w-3.5 text-primary" /> Venue / Location
-                          </FormLabel>
-                          <FormControl>
-                            <Input placeholder="Palace Grounds, Lucknow" data-testid="input-venue" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="budget"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-1.5">
-                            <IndianRupee className="h-3.5 w-3.5 text-primary" /> Approximate Budget
-                          </FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g. ₹25,000 – ₹50,000" data-testid="input-budget" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="notes"
-                    render={({ field }) => (
+                    <FormField control={form.control} name="name" render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Additional Notes / Fireworks Range (Optional)</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Describe your ideal show — e.g. 'Want heavy sky shots during baraat entry, Cold Pyro for varmala stage, sky lanterns for doli farewell...'"
-                            className="resize-none h-24"
-                            data-testid="textarea-notes"
-                            {...field}
-                          />
-                        </FormControl>
+                        <FormLabel className="flex items-center gap-1.5"><User className="h-3.5 w-3.5 text-primary" /> {t("events_fullname")}</FormLabel>
+                        <FormControl><Input placeholder="Rajesh Kumar" {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
-                    )}
-                  />
+                    )} />
+                    <FormField control={form.control} name="phone" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-1.5"><Phone className="h-3.5 w-3.5 text-primary" /> {t("events_phone")}</FormLabel>
+                        <FormControl><Input placeholder="+91 9876543210" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <FormField control={form.control} name="eventType" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5 text-primary" /> {t("events_type")}</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger><SelectValue placeholder="Select event type" /></SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Marriage / Baraat">Marriage / Baraat</SelectItem>
+                            <SelectItem value="Birthday Party">Birthday Party</SelectItem>
+                            <SelectItem value="Diwali Celebration">Diwali Celebration</SelectItem>
+                            <SelectItem value="Corporate Event">Corporate Event</SelectItem>
+                            <SelectItem value="New Year Party">New Year Party</SelectItem>
+                            <SelectItem value="Anniversary">Anniversary</SelectItem>
+                            <SelectItem value="Other Occasion">Other Occasion</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="date" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5 text-primary" /> {t("events_date")}</FormLabel>
+                        <FormControl><Input type="date" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <FormField control={form.control} name="venue" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-primary" /> {t("events_venue")}</FormLabel>
+                        <FormControl><Input placeholder="Marriage Hall, Gorakhpur" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="budget" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-1.5"><IndianRupee className="h-3.5 w-3.5 text-primary" /> {t("events_budget")}</FormLabel>
+                        <FormControl><Input placeholder="e.g. ₹25,000 – ₹50,000" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  </div>
+
+                  <FormField control={form.control} name="notes" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("events_notes")}</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Describe your ideal show — e.g. 'Heavy sky shots during baraat entry, Cold Pyro for varmala stage, sky lanterns for doli farewell...'"
+                          className="resize-none h-24"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
                 </form>
               </Form>
             </div>
@@ -298,11 +237,11 @@ Sent via Shah Fireworks Website`;
               <div className="flex items-center gap-3 mb-2">
                 <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold shrink-0">2</div>
                 <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Select Your Fireworks
+                  {t("events_step2")}
                 </h2>
               </div>
               <p className="text-sm text-muted-foreground mb-7 ml-11">
-                Use + / - to set the quantity of each item. Prices vary per season — you will receive best offer on WhatsApp.
+                Use + / − to set the quantity of each item. Prices vary per season — best offer shared on WhatsApp.
               </p>
 
               <div className="space-y-8">
@@ -320,7 +259,6 @@ Sent via Shah Fireworks Website`;
                               ? "border-primary/50 bg-primary/8 shadow-sm"
                               : "border-border bg-background hover:border-border/80"
                           }`}
-                          data-testid={`item-${item.id}`}
                         >
                           <div className="flex-1 min-w-0">
                             <div className="text-sm font-medium text-foreground leading-tight truncate">{item.name}</div>
@@ -329,26 +267,15 @@ Sent via Shah Fireworks Website`;
                             )}
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <button
-                              type="button"
-                              onClick={() => decrement(item.id)}
-                              disabled={quantities[item.id] === 0}
-                              className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                              data-testid={`btn-dec-${item.id}`}
-                            >
+                            <button type="button" onClick={() => decrement(item.id)} disabled={quantities[item.id] === 0}
+                              className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                               <Minus className="h-3.5 w-3.5" />
                             </button>
-                            <span
-                              className={`w-6 text-center text-sm font-bold tabular-nums ${quantities[item.id] > 0 ? "text-primary" : "text-muted-foreground"}`}
-                            >
+                            <span className={`w-6 text-center text-sm font-bold tabular-nums ${quantities[item.id] > 0 ? "text-primary" : "text-muted-foreground"}`}>
                               {quantities[item.id]}
                             </span>
-                            <button
-                              type="button"
-                              onClick={() => increment(item.id)}
-                              className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-colors"
-                              data-testid={`btn-inc-${item.id}`}
-                            >
+                            <button type="button" onClick={() => increment(item.id)}
+                              className="h-7 w-7 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-colors">
                               <Plus className="h-3.5 w-3.5" />
                             </button>
                           </div>
@@ -360,18 +287,18 @@ Sent via Shah Fireworks Website`;
               </div>
             </div>
 
-            {/* Step 3: Summary + Submit */}
+            {/* Step 3 */}
             <div className="bg-card rounded-2xl border border-border p-6 md:p-8 shadow-md">
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold shrink-0">3</div>
                 <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Review &amp; Send Inquiry
+                  {t("events_step3")}
                 </h2>
               </div>
 
               {selectedItems.length > 0 ? (
                 <div className="mb-6 rounded-xl bg-primary/6 border border-primary/20 p-4">
-                  <p className="text-xs font-bold uppercase tracking-wider text-primary mb-3">Selected Fireworks ({selectedItems.length} items)</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-primary mb-3">{t("events_selected")} ({selectedItems.length})</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                     {selectedItems.map((item, i) => (
                       <div key={i} className="flex items-center justify-between text-sm">
@@ -383,27 +310,20 @@ Sent via Shah Fireworks Website`;
                 </div>
               ) : (
                 <div className="mb-6 rounded-xl bg-muted/40 border border-border p-4 text-center text-sm text-muted-foreground">
-                  No fireworks selected yet — you can still submit and describe your needs in the notes above, or select items in Step 2.
+                  {t("events_noitems")}
                 </div>
               )}
 
               <div className="rounded-xl bg-[#25D366]/8 border border-[#25D366]/20 p-4 mb-6 text-sm text-muted-foreground">
-                Tapping the button below will open WhatsApp with all your details pre-filled.
-                Mukhtar Ahmad Shah will reply with pricing and availability within a few hours.
+                {t("events_wa_note")}
               </div>
 
-              <Button
-                type="submit"
-                form="event-form"
-                size="lg"
-                className="w-full h-14 text-base font-semibold bg-[#25D366] hover:bg-[#20b858] text-white gap-3 shadow-lg"
-                data-testid="button-submit-event"
-              >
+              <Button type="submit" form="event-form" size="lg"
+                className="w-full h-14 text-base font-semibold bg-[#25D366] hover:bg-[#20b858] text-white gap-3 shadow-lg">
                 <Send className="h-5 w-5" />
-                Send Event Inquiry via WhatsApp
+                {t("events_submit")}
               </Button>
             </div>
-
           </div>
         </div>
       </div>
