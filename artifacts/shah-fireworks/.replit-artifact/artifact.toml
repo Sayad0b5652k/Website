@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Shah Fireworks"
+version = "1.0.0"
+id = "artifacts/shah-fireworks"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24203
+
+[services.development]
+run = "pnpm --filter @workspace/shah-fireworks run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/shah-fireworks", "run", "build" ]
+publicDir = "artifacts/shah-fireworks/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24203"
+BASE_PATH = "/"
