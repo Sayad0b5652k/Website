@@ -133,7 +133,7 @@ export function Navbar() {
           />
 
           {/* Drawer */}
-          <div className="fixed top-0 right-0 h-full w-72 max-w-[85vw] bg-card border-l border-border z-50 flex flex-col lg:hidden shadow-2xl">
+          <div className="fixed top-0 left-0 h-full w-72 max-w-[85vw] bg-card border-r border-border z-50 flex flex-col lg:hidden shadow-2xl">
 
             {/* Drawer header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-background/50">
