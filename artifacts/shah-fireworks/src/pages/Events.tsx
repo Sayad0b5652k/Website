@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Minus, Plus, Send, Sparkles, CalendarDays, MapPin, IndianRupee, User, Phone } from "lucide-react";
+import { Minus, Plus, Send, Sparkles, CalendarDays, MapPin, IndianRupee, User, Phone, PenLine } from "lucide-react";
 import { EVENT_FIREWORKS } from "@/data/fireworks";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -18,6 +18,7 @@ const eventFormSchema = z.object({
   date: z.string().min(1, { message: "Please select the event date." }),
   venue: z.string().min(3, { message: "Please enter the venue / location." }),
   budget: z.string().min(1, { message: "Please enter your approximate budget." }),
+  customFireworks: z.string().optional(),
   notes: z.string().optional(),
 });
 
@@ -34,7 +35,7 @@ export default function Events() {
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
-    defaultValues: { name: "", phone: "", eventType: "", date: "", venue: "", budget: "", notes: "" },
+    defaultValues: { name: "", phone: "", eventType: "", date: "", venue: "", budget: "", customFireworks: "", notes: "" },
   });
 
   const increment = (id: string) => setQuantities((q) => ({ ...q, [id]: (q[id] || 0) + 1 }));
@@ -51,30 +52,40 @@ export default function Events() {
   function onSubmit(data: EventFormValues) {
     const fireworksList =
       selectedItems.length > 0
-        ? selectedItems.map((i) => `  • ${i.name}${i.localName ? ` (${i.localName})` : ""} × ${i.qty}`).join("\n")
-        : "  Not specified — to discuss further";
+        ? selectedItems.map((i) => `  ✦ ${i.name}${i.localName ? ` (${i.localName})` : ""} × *${i.qty}*`).join("\n")
+        : "  Not selected from list";
+
+    const customSection = data.customFireworks?.trim()
+      ? `\n✨ *CUSTOM / SPECIAL FIREWORKS*\n  ${data.customFireworks.trim()}\n`
+      : "";
+
+    const notesSection = data.notes?.trim()
+      ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes.trim()}\n`
+      : "";
 
     const text =
 `🎆 *SHAH FIREWORKS — EVENT BOOKING*
+━━━━━━━━━━━━━━━━━━━━
 
-👤 *CUSTOMER DETAILS*
-  Name: ${data.name}
-  Phone: ${data.phone}
+👤 *CUSTOMER*
+  *Name:* ${data.name}
+  *Phone:* ${data.phone}
 
 🎊 *EVENT DETAILS*
-  Type: ${data.eventType}
-  Date: ${data.date}
-  Venue: ${data.venue}
-  Budget: ${data.budget}
+  *Type:* ${data.eventType}
+  *Date:* ${data.date}
+  *Venue:* ${data.venue}
+  *Budget:* ${data.budget}
 
-🎇 *FIREWORKS SELECTED*
+🎇 *FIREWORKS SELECTED FROM LIST*
 ${fireworksList}
-${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
-
+${customSection}${notesSection}
+━━━━━━━━━━━━━━━━━━━━
 📍 *Shah Fireworks*
   Ghagsara Bazar, Sahjanwa
   Gorakhpur, UP — 273001
-  WhatsApp: +91 8934859810`;
+  📞 +91 9452457572
+  💬 WhatsApp: +91 8934859810`;
 
     window.open(`https://wa.me/918934859810?text=${encodeURIComponent(text)}`, "_blank");
   }
@@ -84,7 +95,7 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
       {/* Page Header */}
       <section className="relative py-16 overflow-hidden border-b border-border">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/8 to-transparent pointer-events-none" />
-        <div className="container px-4 md:px-6 relative z-10 text-center">
+        <div className="container px-4 md:px-8 relative z-10 text-center">
           <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-4 py-1.5 text-sm text-primary font-medium mb-5">
             <Sparkles className="h-3.5 w-3.5" />
             Customized Event Packages
@@ -96,8 +107,8 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
         </div>
       </section>
 
-      <div className="container px-4 md:px-6 py-12 max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-3 gap-10">
+      <div className="container px-4 md:px-8 py-12 max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-3 gap-8 xl:gap-10">
 
           {/* LEFT sidebar */}
           <div className="lg:col-span-1 space-y-6">
@@ -151,7 +162,7 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
 
               <Form {...form}>
                 <form id="event-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <FormField control={form.control} name="name" render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-1.5"><User className="h-3.5 w-3.5 text-primary" /> {t("events_fullname")}</FormLabel>
@@ -168,7 +179,7 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
                     )} />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <FormField control={form.control} name="eventType" render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5 text-primary" /> {t("events_type")}</FormLabel>
@@ -198,7 +209,7 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
                     )} />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <FormField control={form.control} name="venue" render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-primary" /> {t("events_venue")}</FormLabel>
@@ -214,20 +225,6 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
                       </FormItem>
                     )} />
                   </div>
-
-                  <FormField control={form.control} name="notes" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("events_notes")}</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Describe your ideal show — e.g. 'Heavy sky shots during baraat entry, Cold Pyro for varmala stage, sky lanterns for doli farewell...'"
-                          className="resize-none h-24"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
                 </form>
               </Form>
             </div>
@@ -241,7 +238,7 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
                 </h2>
               </div>
               <p className="text-sm text-muted-foreground mb-7 ml-11">
-                Use + / − to set the quantity of each item. Prices vary per season — best offer shared on WhatsApp.
+                Use + / − to set the quantity. Prices vary per season — best offer shared on WhatsApp.
               </p>
 
               <div className="space-y-8">
@@ -284,6 +281,35 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
                     </div>
                   </div>
                 ))}
+
+                {/* Custom / Special Fireworks field */}
+                <div className="mt-2">
+                  <div className="rounded-2xl border-2 border-dashed border-primary/30 bg-primary/4 p-5">
+                    <div className="flex items-center gap-2 mb-3">
+                      <PenLine className="h-4 w-4 text-primary shrink-0" />
+                      <h4 className="text-sm font-bold text-foreground">
+                        Custom / Special Fireworks — Not in the list above?
+                      </h4>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
+                      Write the name or description of any fireworks you want that aren't listed. We will check availability and include them in your quote.
+                    </p>
+                    <Form {...form}>
+                      <FormField control={form.control} name="customFireworks" render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Textarea
+                              placeholder="e.g. Sky lanterns × 50, Rainbow color bombs, Niagara Falls waterfall effect, Matrix spinning wheels × 4..."
+                              className="resize-none h-24 bg-background border-primary/20 focus:border-primary text-sm"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </Form>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -296,8 +322,8 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
                 </h2>
               </div>
 
-              {selectedItems.length > 0 ? (
-                <div className="mb-6 rounded-xl bg-primary/6 border border-primary/20 p-4">
+              {selectedItems.length > 0 && (
+                <div className="mb-4 rounded-xl bg-primary/6 border border-primary/20 p-4">
                   <p className="text-xs font-bold uppercase tracking-wider text-primary mb-3">{t("events_selected")} ({selectedItems.length})</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                     {selectedItems.map((item, i) => (
@@ -308,13 +334,35 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
                     ))}
                   </div>
                 </div>
-              ) : (
-                <div className="mb-6 rounded-xl bg-muted/40 border border-border p-4 text-center text-sm text-muted-foreground">
+              )}
+
+              {selectedItems.length === 0 && (
+                <div className="mb-4 rounded-xl bg-muted/40 border border-border p-4 text-center text-sm text-muted-foreground">
                   {t("events_noitems")}
                 </div>
               )}
 
-              <div className="rounded-xl bg-[#25D366]/8 border border-[#25D366]/20 p-4 mb-6 text-sm text-muted-foreground">
+              {/* Additional notes */}
+              <Form {...form}>
+                <FormField control={form.control} name="notes" render={({ field }) => (
+                  <FormItem className="mb-5">
+                    <FormLabel className="flex items-center gap-1.5 text-sm">
+                      <PenLine className="h-3.5 w-3.5 text-muted-foreground" />
+                      {t("events_notes")}
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Describe your ideal show — e.g. 'Heavy sky shots during baraat entry, Cold Pyro for varmala stage, sky lanterns for doli farewell...'"
+                        className="resize-none h-20"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              </Form>
+
+              <div className="rounded-xl bg-[#25D366]/8 border border-[#25D366]/20 p-4 mb-5 text-sm text-muted-foreground">
                 {t("events_wa_note")}
               </div>
 

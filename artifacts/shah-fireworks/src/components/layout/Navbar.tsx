@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Phone, Menu, X, MessageCircle } from "lucide-react";
+import { Phone, Menu, X, MessageCircle, Home, BookOpen, CalendarCheck, ShoppingBag, Mail } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
@@ -10,11 +10,11 @@ export function Navbar() {
   const { lang, setLang, t } = useLanguage();
 
   const navLinks = [
-    { href: "/", label: t("nav_home") },
-    { href: "/catalogue", label: t("nav_catalogue") },
-    { href: "/events", label: t("nav_book") },
-    { href: "/wholesale", label: t("nav_wholesale") },
-    { href: "/contact", label: t("nav_contact") },
+    { href: "/", label: t("nav_home"), icon: Home },
+    { href: "/catalogue", label: t("nav_catalogue"), icon: BookOpen },
+    { href: "/events", label: t("nav_book"), icon: CalendarCheck },
+    { href: "/wholesale", label: t("nav_wholesale"), icon: ShoppingBag },
+    { href: "/contact", label: t("nav_contact"), icon: Mail },
   ];
 
   return (
@@ -28,19 +28,19 @@ export function Navbar() {
       </div>
 
       <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 shadow-lg shadow-black/20">
-        <div className="container flex h-[4.5rem] items-center justify-between py-3">
+        <div className="container flex h-[4.5rem] items-center justify-between px-4 md:px-6">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3 shrink-0" onClick={() => setIsOpen(false)}>
             <div className="flex flex-col leading-none">
               <span className="text-[10px] font-medium tracking-[0.3em] uppercase text-muted-foreground">
                 Est. in Gorakhpur, UP
               </span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-[1.6rem] font-black tracking-tight text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-[1.45rem] font-black tracking-tight text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>
                   SHAH
                 </span>
-                <span className="text-[1.6rem] font-light tracking-widest text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <span className="text-[1.45rem] font-light tracking-widest text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
                   FIREWORKS
                 </span>
               </div>
@@ -65,32 +65,24 @@ export function Navbar() {
           </nav>
 
           {/* Desktop right side */}
-          <div className="hidden lg:flex items-center gap-4 ml-2 pl-4 border-l border-border">
+          <div className="hidden lg:flex items-center gap-4 ml-2 pl-4 border-l border-border shrink-0">
             {/* Language Toggle */}
             <div className="flex items-center rounded-lg border border-border overflow-hidden text-xs font-bold">
               <button
                 onClick={() => setLang("en")}
                 className={`px-2.5 py-1.5 transition-colors ${
-                  lang === "en"
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                  lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
-              >
-                EN
-              </button>
+              >EN</button>
               <button
                 onClick={() => setLang("hi")}
                 className={`px-2.5 py-1.5 transition-colors border-l border-border ${
-                  lang === "hi"
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+                  lang === "hi" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
-              >
-                हि
-              </button>
+              >हि</button>
             </div>
 
-            {/* Phone numbers */}
+            {/* Phone */}
             <div className="flex flex-col items-end gap-0.5">
               <a href="tel:+919452457572" className="flex items-center gap-1.5 text-sm font-semibold text-foreground hover:text-primary transition-colors">
                 <Phone className="h-3.5 w-3.5" /> +91 9452457572
@@ -109,54 +101,112 @@ export function Navbar() {
           </div>
 
           {/* Mobile: lang + hamburger */}
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <div className="flex items-center rounded-lg border border-border overflow-hidden text-xs font-bold">
               <button
                 onClick={() => setLang("en")}
-                className={`px-2 py-1.5 transition-colors ${lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+                className={`px-2.5 py-1.5 transition-colors ${lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
               >EN</button>
               <button
                 onClick={() => setLang("hi")}
-                className={`px-2 py-1.5 border-l border-border transition-colors ${lang === "hi" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+                className={`px-2.5 py-1.5 border-l border-border transition-colors ${lang === "hi" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
               >हि</button>
             </div>
-            <button className="p-2 rounded-lg hover:bg-white/5 transition-colors" onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            <button
+              className="p-2.5 rounded-xl hover:bg-white/8 border border-border transition-colors"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
+      </header>
 
-        {/* Mobile menu */}
-        {isOpen && (
-          <div className="md:hidden border-t border-border bg-card py-5 px-4 flex flex-col gap-2 shadow-xl">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-sm font-medium py-3 px-4 rounded-lg transition-colors ${
-                  location === link.href ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-white/5"
-                }`}
+      {/* Mobile: slide-in drawer + backdrop */}
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+            onClick={() => setIsOpen(false)}
+          />
+
+          {/* Drawer */}
+          <div className="fixed top-0 right-0 h-full w-72 max-w-[85vw] bg-card border-l border-border z-50 flex flex-col lg:hidden shadow-2xl">
+
+            {/* Drawer header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-background/50">
+              <div>
+                <span className="text-sm font-black text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>SHAH</span>
+                <span className="text-sm font-light text-foreground ml-1" style={{ fontFamily: "'Playfair Display', serif" }}>FIREWORKS</span>
+              </div>
+              <button
                 onClick={() => setIsOpen(false)}
+                className="p-2 rounded-lg hover:bg-white/8 text-muted-foreground hover:text-foreground transition-colors"
               >
-                {link.label}
-              </Link>
-            ))}
-            <div className="pt-4 border-t border-border mt-2 flex flex-col gap-3">
-              <a href="tel:+919452457572" className="flex items-center gap-2 text-sm font-semibold px-4 py-2">
-                <Phone className="h-4 w-4 text-primary" /> +91 9452457572
-              </a>
-              <a href="tel:+917985759036" className="flex items-center gap-2 text-sm text-muted-foreground px-4 py-2">
-                <Phone className="h-4 w-4 text-primary" /> +91 7985759036
-              </a>
-              <Button asChild className="w-full mt-1 bg-[#25D366] hover:bg-[#20b858] text-white gap-2">
-                <a href="https://wa.me/918934859810" target="_blank" rel="noopener noreferrer">
-                  <MessageCircle className="h-4 w-4" /> {t("nav_whatsapp")}
+                <X className="h-4.5 w-4.5" />
+              </button>
+            </div>
+
+            {/* Nav links */}
+            <nav className="flex-1 overflow-y-auto py-2">
+              {navLinks.map(({ href, label, icon: Icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`flex items-center gap-3.5 px-5 py-3.5 text-sm font-medium transition-colors border-b border-border/30 ${
+                    location === href
+                      ? "text-primary bg-primary/10 border-primary/20"
+                      : "text-foreground hover:bg-white/5"
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                    location === href ? "bg-primary/15" : "bg-white/5"
+                  }`}>
+                    <Icon className={`h-4 w-4 ${location === href ? "text-primary" : "text-muted-foreground"}`} />
+                  </div>
+                  {label}
+                  {location === href && (
+                    <div className="ml-auto h-1.5 w-1.5 rounded-full bg-primary" />
+                  )}
+                </Link>
+              ))}
+            </nav>
+
+            {/* Contact section */}
+            <div className="p-5 border-t border-border bg-background/30 space-y-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">Contact Us</p>
+                <a
+                  href="tel:+919452457572"
+                  className="flex items-center gap-3 py-2.5 px-3 rounded-xl bg-primary/8 border border-primary/15 text-sm font-semibold text-foreground hover:bg-primary/15 transition-colors mb-2"
+                >
+                  <Phone className="h-4 w-4 text-primary shrink-0" />
+                  +91 9452457572
                 </a>
-              </Button>
+                <a
+                  href="tel:+917985759036"
+                  className="flex items-center gap-3 py-2 px-3 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors"
+                >
+                  <Phone className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  +91 7985759036
+                </a>
+              </div>
+              <a
+                href="https://wa.me/918934859810"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2.5 w-full bg-[#25D366] hover:bg-[#20b858] text-white font-semibold py-3.5 rounded-xl text-sm transition-colors shadow-lg"
+              >
+                <MessageCircle className="h-4 w-4" />
+                {t("nav_whatsapp")} — +91 8934859810
+              </a>
             </div>
           </div>
-        )}
-      </header>
+        </>
+      )}
     </>
   );
 }

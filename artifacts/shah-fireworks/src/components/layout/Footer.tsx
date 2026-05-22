@@ -9,7 +9,7 @@ export function Footer() {
 
   return (
     <footer className="border-t border-border bg-card mt-8">
-      <div className="container py-12 grid grid-cols-1 md:grid-cols-4 gap-10">
+      <div className="container py-12 px-4 md:px-8 grid grid-cols-1 md:grid-cols-4 gap-10">
 
         {/* Brand */}
         <div className="md:col-span-1">
@@ -85,7 +85,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="container border-t border-border/50 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+      <div className="container border-t border-border/50 py-6 px-4 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
         <span>&copy; {new Date().getFullYear()} {t("footer_copyright")}</span>
         <span>Ghagsara Bazar, Sahjanwa, Gorakhpur, UP — 273001</span>
       </div>

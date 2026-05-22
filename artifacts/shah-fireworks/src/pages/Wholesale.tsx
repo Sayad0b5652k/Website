@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Minus, Plus, Send, Package, Truck, Percent, ShieldCheck, IndianRupee, User, Phone, MapPin, Building2 } from "lucide-react";
+import { Minus, Plus, Send, Package, Truck, Percent, ShieldCheck, IndianRupee, User, Phone, MapPin, Building2, PenLine } from "lucide-react";
 import { WHOLESALE_FIREWORKS } from "@/data/fireworks";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -16,6 +16,7 @@ const wholesaleFormSchema = z.object({
   phone: z.string().min(10, { message: "Please enter a valid phone number." }),
   city: z.string().min(2, { message: "Please enter your city." }),
   orderValue: z.string().min(1, { message: "Please enter your approximate order value." }),
+  customItems: z.string().optional(),
   notes: z.string().optional(),
 });
 
@@ -32,7 +33,7 @@ export default function Wholesale() {
 
   const form = useForm<WholesaleFormValues>({
     resolver: zodResolver(wholesaleFormSchema),
-    defaultValues: { name: "", businessName: "", phone: "", city: "", orderValue: "", notes: "" },
+    defaultValues: { name: "", businessName: "", phone: "", city: "", orderValue: "", customItems: "", notes: "" },
   });
 
   const increment = (id: string) => setQuantities((q) => ({ ...q, [id]: (q[id] || 0) + 1 }));
@@ -48,27 +49,37 @@ export default function Wholesale() {
   function onSubmit(data: WholesaleFormValues) {
     const itemsList =
       selectedItems.length > 0
-        ? selectedItems.map((i) => `  • ${i.name} — Qty: ${i.qty} cartons/units`).join("\n")
-        : "  Not specified — to discuss further";
+        ? selectedItems.map((i) => `  ✦ ${i.name} — Qty: *${i.qty}* cartons/units`).join("\n")
+        : "  Not selected from list";
+
+    const customSection = data.customItems?.trim()
+      ? `\n📋 *CUSTOM / UNLISTED ITEMS*\n  ${data.customItems.trim()}\n`
+      : "";
+
+    const notesSection = data.notes?.trim()
+      ? `\n📝 *ADDITIONAL REQUIREMENTS*\n  ${data.notes.trim()}\n`
+      : "";
 
     const text =
 `📦 *SHAH FIREWORKS — WHOLESALE INQUIRY*
+━━━━━━━━━━━━━━━━━━━━
 
-👤 *BUSINESS DETAILS*
-  Name: ${data.name}
-  Business / Shop: ${data.businessName}
-  Phone: ${data.phone}
-  City: ${data.city}
-  Order Value: ${data.orderValue}
+🏪 *BUSINESS DETAILS*
+  *Name:* ${data.name}
+  *Business / Shop:* ${data.businessName}
+  *Phone:* ${data.phone}
+  *City:* ${data.city}
+  *Order Budget:* ${data.orderValue}
 
-📦 *ITEMS REQUIRED*
+📦 *ITEMS REQUIRED FROM LIST*
 ${itemsList}
-${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
-
+${customSection}${notesSection}
+━━━━━━━━━━━━━━━━━━━━
 📍 *Shah Fireworks*
   Ghagsara Bazar, Sahjanwa
   Gorakhpur, UP — 273001
-  WhatsApp: +91 8934859810`;
+  📞 +91 9452457572
+  💬 WhatsApp: +91 8934859810`;
 
     window.open(`https://wa.me/918934859810?text=${encodeURIComponent(text)}`, "_blank");
   }
@@ -78,7 +89,7 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
       {/* Page Header */}
       <section className="relative py-16 overflow-hidden border-b border-border">
         <div className="absolute inset-0 bg-gradient-to-b from-accent/6 to-transparent pointer-events-none" />
-        <div className="container px-4 md:px-6 relative z-10 text-center">
+        <div className="container px-4 md:px-8 relative z-10 text-center">
           <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 border border-accent/20 px-4 py-1.5 text-sm text-accent font-medium mb-5">
             <Package className="h-3.5 w-3.5" />
             Bulk Orders &amp; Trade Pricing
@@ -92,7 +103,7 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
 
       {/* Benefits */}
       <section className="border-b border-border section-dark">
-        <div className="container px-4 md:px-6 py-10">
+        <div className="container px-4 md:px-8 py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {[
               { icon: Percent, title: "Best Bulk Rates", desc: "Competitive trade pricing with great margins" },
@@ -112,8 +123,8 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
         </div>
       </section>
 
-      <div className="container px-4 md:px-6 py-12 max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-3 gap-10">
+      <div className="container px-4 md:px-8 py-12 max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-3 gap-8 xl:gap-10">
 
           {/* LEFT */}
           <div className="lg:col-span-1 space-y-6">
@@ -173,7 +184,7 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
 
               <Form {...form}>
                 <form id="wholesale-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <FormField control={form.control} name="name" render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-1.5"><User className="h-3.5 w-3.5 text-accent" /> Your Name</FormLabel>
@@ -190,7 +201,7 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
                     )} />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <FormField control={form.control} name="phone" render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-1.5"><Phone className="h-3.5 w-3.5 text-accent" /> Phone Number</FormLabel>
@@ -214,16 +225,6 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
                       <FormMessage />
                     </FormItem>
                   )} />
-
-                  <FormField control={form.control} name="notes" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Additional Requirements (Optional)</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Any specific brands, delivery location, or preferred payment terms..." className="resize-none h-24" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
                 </form>
               </Form>
             </div>
@@ -235,7 +236,7 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
                 <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>{t("ws_step2")}</h2>
               </div>
               <p className="text-sm text-muted-foreground mb-7 ml-11">
-                Set the quantity (in cartons/units) for each item. Wholesale prices shared on WhatsApp.
+                Set quantity (cartons/units) for each item. Wholesale prices shared on WhatsApp.
               </p>
 
               <div className="space-y-8">
@@ -275,6 +276,35 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
                     </div>
                   </div>
                 ))}
+
+                {/* Custom Items field */}
+                <div className="mt-2">
+                  <div className="rounded-2xl border-2 border-dashed border-accent/30 bg-accent/4 p-5">
+                    <div className="flex items-center gap-2 mb-3">
+                      <PenLine className="h-4 w-4 text-accent shrink-0" />
+                      <h4 className="text-sm font-bold text-foreground">
+                        Custom / Special Items — Not in the list above?
+                      </h4>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
+                      Write any items, brands, or product specifications you need that aren't listed. We will check stock and include in your wholesale quote.
+                    </p>
+                    <Form {...form}>
+                      <FormField control={form.control} name="customItems" render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Textarea
+                              placeholder="e.g. Standard Crackers 50 cartons, Red Star Shells 20 boxes, Ashok brand sky shots 10 cartons..."
+                              className="resize-none h-24 bg-background border-accent/20 focus:border-accent text-sm"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </Form>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -285,8 +315,8 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
                 <h2 className="text-xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>{t("ws_step3")}</h2>
               </div>
 
-              {selectedItems.length > 0 ? (
-                <div className="mb-6 rounded-xl bg-accent/6 border border-accent/20 p-4">
+              {selectedItems.length > 0 && (
+                <div className="mb-4 rounded-xl bg-accent/6 border border-accent/20 p-4">
                   <p className="text-xs font-bold uppercase tracking-wider text-accent mb-3">{t("ws_selected")} ({selectedItems.length})</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                     {selectedItems.map((item, i) => (
@@ -297,13 +327,35 @@ ${data.notes ? `\n📝 *ADDITIONAL NOTES*\n  ${data.notes}` : ""}
                     ))}
                   </div>
                 </div>
-              ) : (
-                <div className="mb-6 rounded-xl bg-muted/40 border border-border p-4 text-center text-sm text-muted-foreground">
+              )}
+
+              {selectedItems.length === 0 && (
+                <div className="mb-4 rounded-xl bg-muted/40 border border-border p-4 text-center text-sm text-muted-foreground">
                   {t("ws_noitems")}
                 </div>
               )}
 
-              <div className="rounded-xl bg-[#25D366]/8 border border-[#25D366]/20 p-4 mb-6 text-sm text-muted-foreground">
+              {/* Notes */}
+              <Form {...form}>
+                <FormField control={form.control} name="notes" render={({ field }) => (
+                  <FormItem className="mb-5">
+                    <FormLabel className="flex items-center gap-1.5 text-sm">
+                      <PenLine className="h-3.5 w-3.5 text-muted-foreground" />
+                      Additional Requirements (Optional)
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Delivery location, preferred payment terms, timeline, any specific brands..."
+                        className="resize-none h-20"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              </Form>
+
+              <div className="rounded-xl bg-[#25D366]/8 border border-[#25D366]/20 p-4 mb-5 text-sm text-muted-foreground">
                 Your inquiry will open WhatsApp with all details pre-filled. We will respond with wholesale pricing and availability promptly.
               </div>
 
