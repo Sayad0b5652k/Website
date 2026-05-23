@@ -94,18 +94,18 @@
   --popover-border: 225 25% 18%;
 
   /* Vivid crimson red — the primary brand color */
-  --primary: 350 85% 50%;
+  --primary: 350 92% 53%;
   --primary-foreground: 0 0% 100%;
 
   /* Gold — the secondary accent */
-  --secondary: 42 96% 52%;
-  --secondary-foreground: 225 35% 6%;
+  --secondary: 38 97% 55%;
+  --secondary-foreground: 222 38% 6%;
 
-  --muted: 225 25% 14%;
-  --muted-foreground: 225 15% 60%;
+  --muted: 222 28% 13%;
+  --muted-foreground: 222 12% 62%;
 
-  --accent: 42 96% 52%;
-  --accent-foreground: 225 35% 6%;
+  --accent: 38 97% 55%;
+  --accent-foreground: 222 38% 6%;
 
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;

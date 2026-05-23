@@ -3,6 +3,7 @@ import { Phone, Menu, X, MessageCircle, Home, BookOpen, CalendarCheck, ShoppingB
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/context/LanguageContext";
+import { FireworksLogo } from "@/components/Logo";
 
 export function Navbar() {
   const [location] = useLocation();
@@ -31,10 +32,11 @@ export function Navbar() {
         <div className="container flex h-[4.5rem] items-center justify-between px-4 md:px-6">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 shrink-0" onClick={() => setIsOpen(false)}>
+          <Link href="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setIsOpen(false)}>
+            <FireworksLogo className="h-9 w-9 text-primary shrink-0" />
             <div className="flex flex-col leading-none">
-              <span className="text-[10px] font-medium tracking-[0.3em] uppercase text-muted-foreground">
-                Est. in Gorakhpur, UP
+              <span className="text-[10px] font-medium tracking-[0.28em] uppercase text-muted-foreground">
+                Est. 1947 · Gorakhpur, UP
               </span>
               <div className="flex items-baseline gap-1.5">
                 <span className="text-[1.45rem] font-black tracking-tight text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>
@@ -137,9 +139,13 @@ export function Navbar() {
 
             {/* Drawer header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-background/50">
-              <div>
-                <span className="text-sm font-black text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>SHAH</span>
-                <span className="text-sm font-light text-foreground ml-1" style={{ fontFamily: "'Playfair Display', serif" }}>FIREWORKS</span>
+              <div className="flex items-center gap-2">
+                <FireworksLogo className="h-7 w-7 text-primary shrink-0" />
+                <div>
+                  <span className="text-sm font-black text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>SHAH</span>
+                  <span className="text-sm font-light text-foreground ml-1" style={{ fontFamily: "'Playfair Display', serif" }}>FIREWORKS</span>
+                  <div className="text-[9px] tracking-widest text-muted-foreground uppercase">Est. 1947</div>
+                </div>
               </div>
               <button
                 onClick={() => setIsOpen(false)}

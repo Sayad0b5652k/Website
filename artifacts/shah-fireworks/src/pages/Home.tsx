@@ -12,12 +12,66 @@ export default function Home() {
       {/* ── HERO ── */}
       <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,hsl(350_85%_50%_/_0.18),transparent)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_80%_80%,hsl(42_96%_52%_/_0.08),transparent)]" />
-          <div
-            className="absolute inset-0 opacity-[0.03]"
-            style={{ backgroundImage: "radial-gradient(hsl(38 40% 92%) 1px, transparent 1px)", backgroundSize: "32px 32px" }}
-          />
+          {/* Layered radial gradients */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_100%_70%_at_50%_-5%,hsl(350_92%_53%_/_0.24),transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_90%_90%,hsl(38_97%_55%_/_0.11),transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_45%_45%_at_10%_75%,hsl(350_92%_53%_/_0.08),transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_30%_30%_at_75%_20%,hsl(38_97%_55%_/_0.07),transparent)]" />
+
+          {/* Large decorative fireworks burst — centred, very faint */}
+          <svg className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[820px] h-[820px] opacity-[0.04] pointer-events-none" viewBox="0 0 400 400" fill="none">
+            {[...Array(16)].map((_, i) => {
+              const angle = (i * 22.5 * Math.PI) / 180;
+              const x2 = 200 + Math.cos(angle) * 188;
+              const y2 = 200 + Math.sin(angle) * 188;
+              return (
+                <g key={i}>
+                  <line x1="200" y1="200" x2={x2} y2={y2} stroke="hsl(38,97%,55%)" strokeWidth={i % 2 === 0 ? "2.5" : "1.5"} strokeLinecap="round" />
+                  <circle cx={x2} cy={y2} r={i % 2 === 0 ? "6" : "4"} fill="hsl(38,97%,55%)" />
+                </g>
+              );
+            })}
+            <circle cx="200" cy="200" r="22" fill="hsl(38,97%,55%)" />
+            <circle cx="200" cy="200" r="13" fill="hsl(350,92%,53%)" />
+          </svg>
+
+          {/* Secondary smaller burst — top right */}
+          <svg className="absolute top-12 right-16 w-48 h-48 opacity-[0.055] pointer-events-none hidden md:block" viewBox="0 0 200 200" fill="none">
+            {[...Array(12)].map((_, i) => {
+              const angle = (i * 30 * Math.PI) / 180;
+              const x2 = 100 + Math.cos(angle) * 90;
+              const y2 = 100 + Math.sin(angle) * 90;
+              return <line key={i} x1="100" y1="100" x2={x2} y2={y2} stroke="hsl(350,92%,53%)" strokeWidth="1.8" strokeLinecap="round" />;
+            })}
+            <circle cx="100" cy="100" r="10" fill="hsl(350,92%,53%)" />
+          </svg>
+
+          {/* Third burst — bottom left */}
+          <svg className="absolute bottom-20 left-10 w-36 h-36 opacity-[0.045] pointer-events-none hidden md:block" viewBox="0 0 200 200" fill="none">
+            {[...Array(10)].map((_, i) => {
+              const angle = (i * 36 * Math.PI) / 180;
+              const x2 = 100 + Math.cos(angle) * 85;
+              const y2 = 100 + Math.sin(angle) * 85;
+              return <line key={i} x1="100" y1="100" x2={x2} y2={y2} stroke="hsl(38,97%,55%)" strokeWidth="1.5" strokeLinecap="round" />;
+            })}
+            <circle cx="100" cy="100" r="8" fill="hsl(38,97%,55%)" />
+          </svg>
+
+          {/* Scattered sparkle stars */}
+          <svg className="absolute inset-0 w-full h-full opacity-[0.14] pointer-events-none" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+            {[[100,120],[250,60],[450,90],[700,50],[950,130],[1100,80],[80,700],[200,750],[400,720],[600,680],[850,740],[1050,700],[1150,400],[50,400],[300,280],[900,310],[160,460],[780,200],[520,560],[1080,520]].map(([cx, cy], i) => (
+              <g key={i}>
+                <line x1={cx} y1={cy - 9} x2={cx} y2={cy + 9} stroke="hsl(38,97%,55%)" strokeWidth="1.6" strokeLinecap="round" />
+                <line x1={cx - 9} y1={cy} x2={cx + 9} y2={cy} stroke="hsl(38,97%,55%)" strokeWidth="1.6" strokeLinecap="round" />
+                <line x1={cx - 6} y1={cy - 6} x2={cx + 6} y2={cy + 6} stroke="hsl(38,97%,55%)" strokeWidth="1" strokeLinecap="round" opacity="0.55" />
+                <line x1={cx + 6} y1={cy - 6} x2={cx - 6} y2={cy + 6} stroke="hsl(38,97%,55%)" strokeWidth="1" strokeLinecap="round" opacity="0.55" />
+              </g>
+            ))}
+          </svg>
+
+          {/* Fine dot grid */}
+          <div className="absolute inset-0 opacity-[0.028]"
+            style={{ backgroundImage: "radial-gradient(hsl(38 40% 92%) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
         </div>
 
         <div className="container relative z-10 px-4 py-24 text-center md:px-6">
@@ -49,10 +103,10 @@ export default function Home() {
           {/* Stats bar */}
           <div className="inline-flex flex-wrap justify-center gap-8 md:gap-12 rounded-2xl border border-border/60 bg-card/60 backdrop-blur px-8 py-5 mx-auto shadow-lg">
             {[
-              { value: "500+", label: t("stat_events") },
+              { value: "Countless", label: t("stat_events") },
               { value: "100+", label: t("stat_products") },
               { value: "UP-Wide", label: t("stat_coverage") },
-              { value: "Trusted", label: t("stat_trusted") },
+              { value: "Since 1947", label: t("stat_trusted") },
             ].map((stat, i) => (
               <div key={i} className="text-center min-w-[80px]">
                 <div className="text-2xl font-black text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>{stat.value}</div>

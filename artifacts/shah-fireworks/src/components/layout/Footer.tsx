@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Phone, MessageCircle, MapPin, Navigation } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { FireworksLogo } from "@/components/Logo";
 
 const MAPS_LINK = "https://www.google.com/maps/dir/?api=1&destination=26.8307161,83.1543079";
 
@@ -13,9 +14,15 @@ export function Footer() {
 
         {/* Brand */}
         <div className="md:col-span-1">
-          <Link href="/" className="inline-block mb-4">
-            <span className="text-xl font-black tracking-tight text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>SHAH</span>
-            <span className="text-xl font-light tracking-widest text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}> FIREWORKS</span>
+          <Link href="/" className="inline-flex items-center gap-2.5 mb-4">
+            <FireworksLogo className="h-9 w-9 text-primary shrink-0" />
+            <div className="flex flex-col leading-none">
+              <div className="flex items-baseline gap-1">
+                <span className="text-xl font-black tracking-tight text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>SHAH</span>
+                <span className="text-xl font-light tracking-widest text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>FIREWORKS</span>
+              </div>
+              <span className="text-[9px] tracking-[0.3em] uppercase text-muted-foreground">Est. 1947 · Gorakhpur, UP</span>
+            </div>
           </Link>
           <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
             {t("footer_tagline")}
