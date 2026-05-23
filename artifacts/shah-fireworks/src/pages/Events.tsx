@@ -7,9 +7,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Minus, Plus, Send, Sparkles, CalendarDays, MapPin, IndianRupee, User, Phone, PenLine } from "lucide-react";
+import { Minus, Plus, Send, Sparkles, CalendarDays, MapPin, IndianRupee, User, Phone, PenLine, CheckCircle2 } from "lucide-react";
 import { EVENT_FIREWORKS } from "@/data/fireworks";
 import { useLanguage } from "@/context/LanguageContext";
+import { FireworksLogo } from "@/components/Logo";
+import { Link } from "wouter";
 
 const eventFormSchema = z.object({
   name: z.string().min(2, { message: "Please enter your full name." }),
@@ -26,6 +28,8 @@ type EventFormValues = z.infer<typeof eventFormSchema>;
 
 export default function Events() {
   const { t } = useLanguage();
+
+  const [submitted, setSubmitted] = useState(false);
 
   const [quantities, setQuantities] = useState<Record<string, number>>(() => {
     const init: Record<string, number> = {};
@@ -88,6 +92,53 @@ ${customSection}${notesSection}
   💬 WhatsApp: +91 8934859810`;
 
     window.open(`https://wa.me/918934859810?text=${encodeURIComponent(text)}`, "_blank");
+    setSubmitted(true);
+  }
+
+  if (submitted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-20 bg-background">
+        <div className="text-center max-w-md mx-auto">
+          <div className="w-24 h-24 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary/10">
+            <FireworksLogo className="h-12 w-12 text-primary" />
+          </div>
+          <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-4 py-1 text-xs font-semibold text-primary uppercase tracking-widest mb-5">
+            <CheckCircle2 className="h-3.5 w-3.5" /> Booking Received
+          </div>
+          <h2 className="text-4xl font-black text-foreground mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Booking Submitted!
+          </h2>
+          <p className="text-xl text-primary font-semibold mb-2">We will call you soon.</p>
+          <p className="text-muted-foreground text-sm mb-1">बुकिंग जमा हो गई — हम जल्द ही आपको कॉल करेंगे।</p>
+          <p className="text-xs text-muted-foreground mb-10 leading-relaxed">Our team typically confirms within a few hours. For urgent queries, call or WhatsApp directly.</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+            <Button
+              onClick={() => {
+                setSubmitted(false);
+                form.reset();
+                const init: Record<string, number> = {};
+                EVENT_FIREWORKS.forEach(s => s.items.forEach(i => { init[i.id] = 0; }));
+                setQuantities(init);
+              }}
+              className="gap-2"
+            >
+              <Sparkles className="h-4 w-4" /> Book Another Event
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/">Return Home</Link>
+            </Button>
+          </div>
+          <div className="pt-6 border-t border-border flex flex-wrap gap-4 justify-center">
+            <a href="tel:+919452457572" className="flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors">
+              <Phone className="h-4 w-4" /> +91 9452457572
+            </a>
+            <a href="https://wa.me/918934859810" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-semibold text-[#25D366] hover:underline">
+              WhatsApp: +91 8934859810
+            </a>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

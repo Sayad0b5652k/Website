@@ -67,34 +67,28 @@ export function Navbar() {
           </nav>
 
           {/* Desktop right side */}
-          <div className="hidden lg:flex items-center gap-4 ml-2 pl-4 border-l border-border shrink-0">
+          <div className="hidden lg:flex items-center gap-3 ml-2 pl-4 border-l border-border shrink-0">
             {/* Language Toggle */}
             <div className="flex items-center rounded-lg border border-border overflow-hidden text-xs font-bold">
               <button
                 onClick={() => setLang("en")}
-                className={`px-2.5 py-1.5 transition-colors ${
+                className={`px-3 py-1.5 transition-colors ${
                   lang === "en" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >EN</button>
               <button
                 onClick={() => setLang("hi")}
-                className={`px-2.5 py-1.5 transition-colors border-l border-border ${
+                className={`px-3 py-1.5 transition-colors border-l border-border ${
                   lang === "hi" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >हि</button>
             </div>
 
-            {/* Phone */}
-            <div className="flex flex-col items-end gap-0.5">
-              <a href="tel:+919452457572" className="flex items-center gap-1.5 text-sm font-semibold text-foreground hover:text-primary transition-colors">
-                <Phone className="h-3.5 w-3.5" /> +91 9452457572
-              </a>
-              <a href="tel:+917985759036" className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors">
-                <Phone className="h-3 w-3" /> +91 7985759036
-              </a>
-            </div>
+            <a href="tel:+919452457572" className="hidden xl:flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">
+              <Phone className="h-3.5 w-3.5" /> +91 9452457572
+            </a>
 
-            <Button asChild size="sm" className="bg-[#25D366] hover:bg-[#20b858] text-white shadow-md gap-2 h-10 px-4 font-semibold shrink-0">
+            <Button asChild size="sm" className="bg-[#25D366] hover:bg-[#20b858] text-white shadow-md gap-1.5 h-9 px-4 font-semibold shrink-0">
               <a href="https://wa.me/918934859810" target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="h-4 w-4" />
                 {t("nav_whatsapp")}

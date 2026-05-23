@@ -1,5 +1,6 @@
-import { MapPin, Phone, MessageCircle, User, Clock, Navigation, ExternalLink } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
+import { useRef, useState } from "react";
+import { MapPin, Phone, MessageCircle, User, Clock, Navigation, ExternalLink, Download, Share2, Check } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
 import { useLanguage } from "@/context/LanguageContext";
 
 const LAT = 26.8307161;
@@ -7,6 +8,62 @@ const LNG = 83.1543079;
 const MAPS_DIRECTIONS = `https://www.google.com/maps/dir/?api=1&destination=${LAT},${LNG}`;
 const MAPS_VIEW = `https://maps.google.com/maps?q=${LAT},${LNG}&z=16&output=embed`;
 const MAPS_OPEN = `https://www.google.com/maps/search/?api=1&query=${LAT},${LNG}`;
+
+function QRCard({ qr }: { qr: { value: string; label: string; sub: string; color: string } }) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [copied, setCopied] = useState(false);
+
+  function handleDownload() {
+    const canvas = wrapRef.current?.querySelector("canvas");
+    if (!canvas) return;
+    const link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    link.download = `shah-fireworks-${qr.label.toLowerCase().replace(/\s+/g, "-")}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  async function handleShare() {
+    if (navigator.share) {
+      try { await navigator.share({ url: qr.value, title: `Shah Fireworks — ${qr.label}` }); } catch {}
+    } else {
+      try {
+        await navigator.clipboard.writeText(qr.value);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch {}
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-center rounded-2xl border border-border bg-card p-5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/6 transition-all duration-300 gap-4">
+      <div ref={wrapRef} className="bg-white rounded-xl p-3 shadow-sm">
+        <QRCodeCanvas value={qr.value} size={130} level="H" fgColor={qr.color} bgColor="#FFFFFF" />
+      </div>
+      <div className="text-center flex-1">
+        <h4 className="font-bold text-sm text-foreground mb-1" style={{ color: qr.color }}>{qr.label}</h4>
+        <p className="text-xs text-center text-muted-foreground leading-relaxed">{qr.sub}</p>
+      </div>
+      <div className="flex gap-2 w-full">
+        <button
+          onClick={handleDownload}
+          className="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold border border-border rounded-lg py-2 text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors"
+        >
+          <Download className="h-3.5 w-3.5" /> Save PNG
+        </button>
+        <button
+          onClick={handleShare}
+          className="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold border border-primary/30 bg-primary/8 text-primary rounded-lg py-2 hover:bg-primary/15 transition-colors"
+        >
+          {copied
+            ? <><Check className="h-3.5 w-3.5" /> Copied!</>
+            : <><Share2 className="h-3.5 w-3.5" /> Share</>}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function Contact() {
   const { t } = useLanguage();
@@ -216,24 +273,7 @@ export default function Contact() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             {qrCodes.map((qr, i) => (
-              <div
-                key={i}
-                className="flex flex-col items-center rounded-2xl border border-border bg-card p-6 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/6 transition-all duration-300"
-              >
-                <div className={`${qr.bg} p-4 rounded-xl mb-5 border border-gray-200 shadow-sm`}>
-                  <QRCodeSVG
-                    value={qr.value}
-                    size={130}
-                    level="H"
-                    fgColor={qr.color}
-                    bgColor="#FFFFFF"
-                  />
-                </div>
-                <h4 className="font-bold text-base text-foreground mb-1" style={{ color: qr.color }}>
-                  {qr.label}
-                </h4>
-                <p className="text-xs text-center text-muted-foreground leading-relaxed">{qr.sub}</p>
-              </div>
+              <QRCard key={i} qr={qr} />
             ))}
           </div>
         </div>

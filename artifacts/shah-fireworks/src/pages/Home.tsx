@@ -12,66 +12,32 @@ export default function Home() {
       {/* ── HERO ── */}
       <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          {/* Layered radial gradients */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_100%_70%_at_50%_-5%,hsl(350_92%_53%_/_0.24),transparent)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_90%_90%,hsl(38_97%_55%_/_0.11),transparent)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_45%_45%_at_10%_75%,hsl(350_92%_53%_/_0.08),transparent)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_30%_30%_at_75%_20%,hsl(38_97%_55%_/_0.07),transparent)]" />
+          {/* Primary crimson glow from top-centre — stage-light effect */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_65%_at_50%_-8%,hsl(350_92%_53%_/_0.22),transparent)]" />
+          {/* Warm gold bloom — lower right */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_55%_at_92%_95%,hsl(38_97%_55%_/_0.10),transparent)]" />
+          {/* Faint left edge depth */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_35%_50%_at_0%_60%,hsl(350_92%_53%_/_0.05),transparent)]" />
 
-          {/* Large decorative fireworks burst — centred, very faint */}
-          <svg className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[820px] h-[820px] opacity-[0.04] pointer-events-none" viewBox="0 0 400 400" fill="none">
-            {[...Array(16)].map((_, i) => {
-              const angle = (i * 22.5 * Math.PI) / 180;
-              const x2 = 200 + Math.cos(angle) * 188;
-              const y2 = 200 + Math.sin(angle) * 188;
-              return (
-                <g key={i}>
-                  <line x1="200" y1="200" x2={x2} y2={y2} stroke="hsl(38,97%,55%)" strokeWidth={i % 2 === 0 ? "2.5" : "1.5"} strokeLinecap="round" />
-                  <circle cx={x2} cy={y2} r={i % 2 === 0 ? "6" : "4"} fill="hsl(38,97%,55%)" />
-                </g>
-              );
-            })}
-            <circle cx="200" cy="200" r="22" fill="hsl(38,97%,55%)" />
-            <circle cx="200" cy="200" r="13" fill="hsl(350,92%,53%)" />
+          {/* Concentric ripple rings — like an aerial firework burst */}
+          <svg
+            className="absolute top-[42%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110vw] max-w-[900px] aspect-square opacity-[0.045] pointer-events-none"
+            viewBox="0 0 600 600" fill="none"
+          >
+            <circle cx="300" cy="300" r="90"  stroke="hsl(38,97%,55%)" strokeWidth="1.2" />
+            <circle cx="300" cy="300" r="160" stroke="hsl(38,97%,55%)" strokeWidth="0.9" opacity="0.8" />
+            <circle cx="300" cy="300" r="230" stroke="hsl(38,97%,55%)" strokeWidth="0.7" opacity="0.6" />
+            <circle cx="300" cy="300" r="300" stroke="hsl(38,97%,55%)" strokeWidth="0.5" opacity="0.4" />
           </svg>
 
-          {/* Secondary smaller burst — top right */}
-          <svg className="absolute top-12 right-16 w-48 h-48 opacity-[0.055] pointer-events-none hidden md:block" viewBox="0 0 200 200" fill="none">
-            {[...Array(12)].map((_, i) => {
-              const angle = (i * 30 * Math.PI) / 180;
-              const x2 = 100 + Math.cos(angle) * 90;
-              const y2 = 100 + Math.sin(angle) * 90;
-              return <line key={i} x1="100" y1="100" x2={x2} y2={y2} stroke="hsl(350,92%,53%)" strokeWidth="1.8" strokeLinecap="round" />;
-            })}
-            <circle cx="100" cy="100" r="10" fill="hsl(350,92%,53%)" />
-          </svg>
+          {/* Fine dot grid — very subtle texture */}
+          <div
+            className="absolute inset-0 opacity-[0.025]"
+            style={{ backgroundImage: "radial-gradient(hsl(38 40% 92%) 1px, transparent 1px)", backgroundSize: "30px 30px" }}
+          />
 
-          {/* Third burst — bottom left */}
-          <svg className="absolute bottom-20 left-10 w-36 h-36 opacity-[0.045] pointer-events-none hidden md:block" viewBox="0 0 200 200" fill="none">
-            {[...Array(10)].map((_, i) => {
-              const angle = (i * 36 * Math.PI) / 180;
-              const x2 = 100 + Math.cos(angle) * 85;
-              const y2 = 100 + Math.sin(angle) * 85;
-              return <line key={i} x1="100" y1="100" x2={x2} y2={y2} stroke="hsl(38,97%,55%)" strokeWidth="1.5" strokeLinecap="round" />;
-            })}
-            <circle cx="100" cy="100" r="8" fill="hsl(38,97%,55%)" />
-          </svg>
-
-          {/* Scattered sparkle stars */}
-          <svg className="absolute inset-0 w-full h-full opacity-[0.14] pointer-events-none" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
-            {[[100,120],[250,60],[450,90],[700,50],[950,130],[1100,80],[80,700],[200,750],[400,720],[600,680],[850,740],[1050,700],[1150,400],[50,400],[300,280],[900,310],[160,460],[780,200],[520,560],[1080,520]].map(([cx, cy], i) => (
-              <g key={i}>
-                <line x1={cx} y1={cy - 9} x2={cx} y2={cy + 9} stroke="hsl(38,97%,55%)" strokeWidth="1.6" strokeLinecap="round" />
-                <line x1={cx - 9} y1={cy} x2={cx + 9} y2={cy} stroke="hsl(38,97%,55%)" strokeWidth="1.6" strokeLinecap="round" />
-                <line x1={cx - 6} y1={cy - 6} x2={cx + 6} y2={cy + 6} stroke="hsl(38,97%,55%)" strokeWidth="1" strokeLinecap="round" opacity="0.55" />
-                <line x1={cx + 6} y1={cy - 6} x2={cx - 6} y2={cy + 6} stroke="hsl(38,97%,55%)" strokeWidth="1" strokeLinecap="round" opacity="0.55" />
-              </g>
-            ))}
-          </svg>
-
-          {/* Fine dot grid */}
-          <div className="absolute inset-0 opacity-[0.028]"
-            style={{ backgroundImage: "radial-gradient(hsl(38 40% 92%) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
+          {/* Diagonal light-beam accent — top right corner */}
+          <div className="absolute top-0 right-0 w-1/3 h-2/3 bg-[radial-gradient(ellipse_80%_80%_at_100%_0%,hsl(38_97%_55%_/_0.05),transparent)] pointer-events-none" />
         </div>
 
         <div className="container relative z-10 px-4 py-24 text-center md:px-6">

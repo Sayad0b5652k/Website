@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Minus, Plus, Send, Package, Truck, Percent, ShieldCheck, IndianRupee, User, Phone, MapPin, Building2, PenLine } from "lucide-react";
+import { Minus, Plus, Send, Package, Truck, Percent, ShieldCheck, IndianRupee, User, Phone, MapPin, Building2, PenLine, CheckCircle2 } from "lucide-react";
 import { WHOLESALE_FIREWORKS } from "@/data/fireworks";
 import { useLanguage } from "@/context/LanguageContext";
+import { FireworksLogo } from "@/components/Logo";
+import { Link } from "wouter";
 
 const wholesaleFormSchema = z.object({
   name: z.string().min(2, { message: "Please enter your name." }),
@@ -24,6 +26,8 @@ type WholesaleFormValues = z.infer<typeof wholesaleFormSchema>;
 
 export default function Wholesale() {
   const { t } = useLanguage();
+
+  const [submitted, setSubmitted] = useState(false);
 
   const [quantities, setQuantities] = useState<Record<string, number>>(() => {
     const init: Record<string, number> = {};
@@ -82,6 +86,53 @@ ${customSection}${notesSection}
   💬 WhatsApp: +91 8934859810`;
 
     window.open(`https://wa.me/918934859810?text=${encodeURIComponent(text)}`, "_blank");
+    setSubmitted(true);
+  }
+
+  if (submitted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-20 bg-background">
+        <div className="text-center max-w-md mx-auto">
+          <div className="w-24 h-24 rounded-full bg-accent/10 border border-accent/25 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-accent/10">
+            <FireworksLogo className="h-12 w-12 text-accent" />
+          </div>
+          <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 border border-accent/20 px-4 py-1 text-xs font-semibold text-accent uppercase tracking-widest mb-5">
+            <CheckCircle2 className="h-3.5 w-3.5" /> Inquiry Received
+          </div>
+          <h2 className="text-4xl font-black text-foreground mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Booking Submitted!
+          </h2>
+          <p className="text-xl text-accent font-semibold mb-2">We will call you soon.</p>
+          <p className="text-muted-foreground text-sm mb-1">बुकिंग जमा हो गई — हम जल्द ही आपको कॉल करेंगे।</p>
+          <p className="text-xs text-muted-foreground mb-10 leading-relaxed">Our team typically confirms wholesale orders within a few hours. For urgent queries, call or WhatsApp directly.</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+            <Button
+              onClick={() => {
+                setSubmitted(false);
+                form.reset();
+                const init: Record<string, number> = {};
+                WHOLESALE_FIREWORKS.forEach(s => s.items.forEach(i => { init[i.id] = 0; }));
+                setQuantities(init);
+              }}
+              className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground"
+            >
+              <Package className="h-4 w-4" /> Submit Another Order
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/">Return Home</Link>
+            </Button>
+          </div>
+          <div className="pt-6 border-t border-border flex flex-wrap gap-4 justify-center">
+            <a href="tel:+919452457572" className="flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors">
+              <Phone className="h-4 w-4" /> +91 9452457572
+            </a>
+            <a href="https://wa.me/918934859810" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-semibold text-[#25D366] hover:underline">
+              WhatsApp: +91 8934859810
+            </a>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
