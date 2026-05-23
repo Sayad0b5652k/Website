@@ -28,21 +28,24 @@ export function Navbar() {
         </a>
       </div>
 
-      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 shadow-lg shadow-black/20">
-        <div className="container flex h-[4.5rem] items-center justify-between px-4 md:px-6">
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/96 backdrop-blur-md supports-[backdrop-filter]:bg-background/82 shadow-lg shadow-black/25"
+        style={{ borderBottomColor: "hsl(38 97% 55% / 0.18)" }}>
+        <div className="container flex h-16 items-center justify-between px-4 md:px-6">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setIsOpen(false)}>
-            <FireworksLogo className="h-9 w-9 text-primary shrink-0" />
-            <div className="flex flex-col leading-none">
-              <span className="text-[10px] font-medium tracking-[0.28em] uppercase text-muted-foreground">
+          <Link href="/" className="flex items-center gap-2 shrink-0 min-w-0" onClick={() => setIsOpen(false)}>
+            {/* SF badge — slightly larger on desktop */}
+            <FireworksLogo className="h-8 w-8 lg:h-10 lg:w-10 text-primary shrink-0" />
+            <div className="flex flex-col leading-none min-w-0">
+              {/* Est. text only on desktop */}
+              <span className="hidden lg:block text-[9px] font-semibold tracking-[0.32em] uppercase text-muted-foreground/80 mb-0.5">
                 Est. 1947 · Gorakhpur, UP
               </span>
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-[1.45rem] font-black tracking-tight text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <div className="flex items-baseline gap-1 whitespace-nowrap">
+                <span className="text-[1.15rem] lg:text-[1.4rem] font-black tracking-tight text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>
                   SHAH
                 </span>
-                <span className="text-[1.45rem] font-light tracking-widest text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <span className="text-[1.15rem] lg:text-[1.4rem] font-light tracking-wider text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
                   FIREWORKS
                 </span>
               </div>

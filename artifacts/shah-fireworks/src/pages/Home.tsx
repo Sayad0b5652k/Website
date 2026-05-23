@@ -58,16 +58,17 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Button asChild size="lg" className="w-full sm:w-auto h-14 px-8 text-base font-semibold shadow-xl shadow-primary/25 bg-primary hover:bg-primary/90 gap-2">
+            <Button asChild size="lg" className="w-full sm:w-auto h-14 px-9 text-base font-semibold gap-2 bg-primary hover:bg-primary/90 shadow-[0_0_32px_hsl(350_92%_53%_/_0.45)] hover:shadow-[0_0_48px_hsl(350_92%_53%_/_0.55)] transition-shadow">
               <Link href="/events">{t("hero_book")} <ArrowRight className="h-5 w-5" /></Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-base font-medium border-border hover:bg-white/5 gap-2">
+            <Button asChild size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 text-base font-medium border-border/60 hover:bg-white/5 hover:border-accent/40 gap-2 transition-colors">
               <Link href="/catalogue">{t("hero_catalogue")}</Link>
             </Button>
           </div>
 
           {/* Stats bar */}
-          <div className="inline-flex flex-wrap justify-center gap-8 md:gap-12 rounded-2xl border border-border/60 bg-card/60 backdrop-blur px-8 py-5 mx-auto shadow-lg">
+          <div className="inline-flex flex-wrap justify-center gap-6 md:gap-10 rounded-2xl border border-accent/20 bg-card/70 backdrop-blur px-8 py-5 mx-auto shadow-xl shadow-black/30"
+            style={{ borderColor: "hsl(38 97% 55% / 0.18)" }}>
             {[
               { value: "Countless", label: t("stat_events") },
               { value: "100+", label: t("stat_products") },
@@ -76,7 +77,7 @@ export default function Home() {
             ].map((stat, i) => (
               <div key={i} className="text-center min-w-[80px]">
                 <div className="text-2xl font-black text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>{stat.value}</div>
-                <div className="text-xs text-muted-foreground mt-1 font-medium tracking-wide uppercase">{stat.label}</div>
+                <div className="text-xs text-muted-foreground mt-1 font-medium tracking-widest uppercase">{stat.label}</div>
               </div>
             ))}
           </div>
